@@ -1,5 +1,7 @@
 # _*_ coding: utf_8  _*_
- 
+# read marks of many workbooks then write the marks togather for students which failed pass the exam.
+# need test
+
 import openpyxl
 import os
 import re
@@ -10,13 +12,13 @@ classReg = re.compile(r'\d{7}')
 # logging.disable(logging.CRITICAL)
 # logging.basicConfig( filename='loglearn.txt',level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )                   
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
-
 # Read marks
-
-for fileName in os.listdir('d:\\_PythonWorks\\execlOperate\\working'):
-    logging.debug(fileName)
+dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
+for file in os.listdir():
+    logging.debug(file)
     # The student's marks need to write in the cell of the excel
     # List is reasonable at here.
     studentMarks = [
@@ -30,8 +32,9 @@ for fileName in os.listdir('d:\\_PythonWorks\\execlOperate\\working'):
         ['实验成绩',],
         ['总成绩',],
         ]
-    if classReg.search(fileName): 
-        wb = openpyxl.load_workbook( fileName )
+    if classReg.search(file):
+        fullname = dirname + '\\' + file
+        wb = openpyxl.load_workbook( fullname )
         sheet = wb.get_active_sheet()
         for row in range(3,150):
             logging.info('row is:%d',row)
@@ -59,8 +62,8 @@ for fileName in os.listdir('d:\\_PythonWorks\\execlOperate\\working'):
 
         # Write marks    
         wb = openpyxl.Workbook()
-        wb.create_sheet(index=0,title=fileName)
-        sheet = wb.get_sheet_by_name(fileName)
+        wb.create_sheet(index=0,title=file)
+        sheet = wb.get_sheet_by_name(file)
         sheet.column_dimensions['a'].width = 2
         sheet.column_dimensions['b'].width = 30
         sheet.column_dimensions['c'].width = 13
@@ -74,8 +77,8 @@ for fileName in os.listdir('d:\\_PythonWorks\\execlOperate\\working'):
                 logging.info(val[n])
                 sheet.cell(row = 2 + n,column = col).value = val[n]
             col +=1
-        newExcelName = 'BK_' + fileName
-        wb.save(newExcelName)
+        newfullname = dirname + '\\' + 'BK_' + file
+        wb.save(newfullname)
         print('one file is written!')
 print('Done!')
 

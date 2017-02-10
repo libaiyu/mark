@@ -1,5 +1,7 @@
 # _*_ coding: utf_8  _*_
- 
+# read marks of many workbooks then write the marks togather for every student.
+# it is too slowly.
+
 import openpyxl
 import os
 import re
@@ -10,7 +12,8 @@ classReg = re.compile(r'\d{7}') # classReg = re.compile(r'\d{7}[zZ]?')  # classR
 
 logging.disable(logging.CRITICAL)
 # logging.basicConfig( filename='loglearn.txt',level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )                   
-logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+# logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
 studentNo = input('please input the students No: ')
@@ -36,21 +39,21 @@ studentMarks = [
     ['总成绩',],
     ]
 # Read marks
-for twoDigit in range(33):
-    studentNum = str(int(studentNo) + twoDigit)
-    for fileNames in os.listdir('d:\\_PythonWorks\\execlOperate\\2016201701cj'):
-        logging.debug(fileNames)
-        classSearch = classReg.search(fileNames) # a = re.findall(classReg,fileNames)
-        if classSearch:
-            logging.debug(classSearch.group())
-            logging.debug(className)
-            if classSearch.group() == className:
-                logging.debug(fileNames )
-           
-                wb = openpyxl.load_workbook( fileNames ,'r' )
-                sheet = wb.get_sheet_by_name('page 1')
-
-                for row in range(1,130):
+dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
+for file in os.listdir(dirname):
+    logging.debug(file)
+    classSearch = classReg.search(file) # a = re.findall(classReg,file)
+    if classSearch:
+        logging.debug(classSearch.group())
+        logging.debug(className)
+        if classSearch.group() == className:
+            logging.debug(file )
+            fullname = dirname + '\\' + file
+            wb = openpyxl.load_workbook( fullname)
+            sheet = wb.get_active_sheet()
+            for twoDigit in range(33):                   ####
+                studentNum = str(int(studentNo) + twoDigit)    #####
+                for row in range(1,130):                  #####
                     logging.info('row is:%d',row)
                     logging.info( 'error test' + str( sheet['B'+str(row)].value ) )
                     if( sheet['B'+str(row)].value == int(studentNum) ):               #  学号在B列
@@ -61,7 +64,7 @@ for twoDigit in range(33):
                         logging.debug(' 实践成绩：'+ str( sheet['Q'+str(row)].value ) )      #  实践成绩在Q列
                         logging.debug(' 实验成绩：'+ str( sheet['R'+str(row)].value ) )      #  实验成绩在R列
                         logging.debug(' 总成绩：'+ str( sheet['S'+str(row)].value ) )        #  总成绩在S列
-                        studentMarks[0].append(fileNames)
+                        studentMarks[0].append(file)
                         studentMarks[1].append(studentNum)
                         studentMarks[2].append(sheet['D'+str(row)].value)
                         studentMarks[3].append(sheet['J'+str(row)].value)
@@ -71,7 +74,7 @@ for twoDigit in range(33):
                         studentMarks[7].append(sheet['R'+str(row)].value)
                         studentMarks[8].append(sheet['S'+str(row)].value)                  
                         break
-                    logging.error( 'error test')
+                logging.error( 'error test')
 
 # Write marks    
 wb = openpyxl.Workbook()
@@ -84,8 +87,8 @@ for val in studentMarks:
         logging.info(val[n])
         sheet.cell(row = 2 + n,column = col).value = val[n]
     col +=1
-newExcelName = className + '.xlsx'
-wb.save(newExcelName)
+newfullname = dirname + '\\' + className + '.xlsx'
+wb.save(newfullname)
 
 print('Done!')
 
