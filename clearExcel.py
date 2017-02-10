@@ -1,3 +1,4 @@
+#! python3
 # _*_ coding: utf_8  _*_
 # Attention: this will damage all xlsx files' data
  
@@ -14,12 +15,12 @@ excelReg = re.compile(r'.xlsx')
 
 wb = openpyxl.Workbook()
 sheet = wb.get_active_sheet()
-
+dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
 count = 0
-for fileName in os.listdir('d:\\_PythonWorks\\excelOperate\\pscj161702'):
+for fileName in os.listdir(dirname):
     if excelReg.search(fileName):
         if ChineseReg.search(fileName) == None:
-            wb.save(fileName)
+            wb.save(dirname + '\\' + fileName)
             count += 1
             print('file %s   is clear!' % (fileName))
 print('total %d files is clear!' % (count))
