@@ -1,5 +1,9 @@
 # _*_ coding: utf_8  _*_
- 
+# During the course, note the performance for the students.
+# select the "课程"，select "加减分的项",input"学号","分值"
+# it will write the "分值"
+# Record can write. prompt is not good enough.
+
 import openpyxl
 import os
 import re
@@ -9,7 +13,7 @@ import logging
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
-# find the file that include '学生名单' in filename
+# find the Chinese words '学生名单' in filename
 ChineseReg = re.compile(r'学生名单')
 # find the class
 classReg = re.compile(r'\d{7}')
@@ -19,7 +23,7 @@ courseReg = re.compile(r'-(\w{3,11})-')
 performanceTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -30,7 +34,7 @@ performanceTag = [
 labTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -41,7 +45,7 @@ labTag = [
 designTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -52,7 +56,7 @@ designTag = [
 practiceTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -65,13 +69,19 @@ practiceTag = [
 
 fileN = []
 k = 0
-for fileName in os.listdir('d:\\_PythonWorks\\execlOperate\\pscj161702'):
-    fileN.append(fileName)    
-    print(k,fileName)
+dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
+for file in os.listdir(dirname):
+    fullname = dirname + '\\' + file
+    fileN.append(fullname)     
+    print(k,fullname)
     k += 1
 courseNum = input('please input a number for 课程: ')
 
-courseType = ['1 理论performance','2 实验lab','3 课程设计design','4 认识实习practice']
+courseType = ['1 理论performance',
+              '2 实验lab',
+              '3 课程设计design',
+              '4 认识实习practice']
+
 print(courseType[0])
 performanceItem = []
 k = 2
@@ -79,6 +89,7 @@ for val in performanceTag:
     performanceItem.append(str(k) + ' ' + str(val) + ' ')
     k += 1
 print(performanceItem)
+
 print(courseType[1])
 labItem = []
 k = 2
@@ -86,6 +97,7 @@ for val in labTag:
     labItem.append(str(k) + ' ' + str(val) + ' ')
     k += 1
 print(labItem)
+
 print(courseType[2])
 designItem = []
 k = 2
@@ -93,6 +105,7 @@ for val in designTag:
     designItem.append(str(k) + ' ' + str(val) + ' ')
     k += 1
 print(designItem)
+
 print(courseType[3])
 practiceItem = []
 k = 2
@@ -102,7 +115,7 @@ for val in practiceTag:
 print(practiceItem)
 
 itemNum = input('please input a numbers for select item: ')
-stuNum = input('please input two last digitals of select student"s number: ')
+stuNum = input("please input two last digitals of select student's number: ")
 mark = input('please input the mark: ')
 
 wb = openpyxl.load_workbook(fileN[int(courseNum)])
@@ -112,9 +125,9 @@ for row in range(1,60):
     logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
     if str(sheet['b'+str(row)].value)[-2:] == stuNum:                      #  学号在B列
         # Write
-        logging.debug(sheet.cell(row = row,column = int(itemNum)).value)
+        logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
         sheet.cell(row = row,column = int(itemNum)).value += int(mark)
-        logging.debug(sheet.cell(row = row,column = int(itemNum)).value)
+        logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
         wb.save(fileN[int(courseNum)])
         print('one cell is written!')
         break
