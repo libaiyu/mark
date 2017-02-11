@@ -1,16 +1,18 @@
+#! python 3
 # _*_ coding: utf_8  _*_
 # During the course, note the performance for the students.
 # select the "课程"，select "加减分的项",input"学号","分值"
 # it will write the "分值"
-# Record can write. prompt is not good enough.
+# Record can not be written. prompt is not good enough.   2017-2-11-10:50
+# Student's number must be 2 digits, when it is smaller than 10. It should be 0X.  2017-2-11-17:23
 
 import openpyxl
 import os
 import re
 import logging
 
-# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
-logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+# logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
 # find the Chinese words '学生名单' in filename
@@ -66,21 +68,29 @@ practiceTag = [
     ]
 
 # 提示输入信息
-
-fileN = []
+fileList = []
+fullList = []
 k = 0
 dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
 for file in os.listdir(dirname):
     fullname = dirname + '\\' + file
-    fileN.append(fullname)     
-    print(k,fullname)
+    fileList.append(file)
+    fullList.append(fullname)     
+    print(k,file)
     k += 1
 courseNum = input('please input a number for 课程: ')
 
-courseType = ['1 理论performance',
-              '2 实验lab',
-              '3 课程设计design',
-              '4 认识实习practice']
+courseType = ['0 理论performance',
+              '1 实验lab',
+              '2 课程设计design',
+              '3 认识实习practice']
+
+##courseReg.search(fileList[courseNum])
+##
+##courseList = [performanceTag,
+##              labTag,
+##              designTag,
+##              practiceTag]
 
 print(courseType[0])
 performanceItem = []
@@ -115,11 +125,11 @@ for val in practiceTag:
 print(practiceItem)
 
 itemNum = input('please input a numbers for select item: ')
-stuNum = input("please input two last digitals of select student's number: ")
+stuNum = input("please input two last digitals of select student's number: 05 ")
 mark = input('please input the mark: ')
 
-wb = openpyxl.load_workbook(fileN[int(courseNum)])
-logging.critical(fileN[int(courseNum)])
+wb = openpyxl.load_workbook(fullList[int(courseNum)])
+logging.critical(fullList[int(courseNum)])
 sheet = wb.get_active_sheet()
 for row in range(1,60):
     logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
@@ -128,7 +138,7 @@ for row in range(1,60):
         logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
         sheet.cell(row = row,column = int(itemNum)).value += int(mark)
         logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
-        wb.save(fileN[int(courseNum)])
+        wb.save(fullList[int(courseNum)])
         print('one cell is written!')
         break
 
