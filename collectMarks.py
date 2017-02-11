@@ -71,15 +71,17 @@ for file in os.listdir(DIRNAME):
         for row in range(1,len(sheet.rows)):                  #####
             logging.info('row is:%d',row)
             logging.info( 'error test' + str( sheet['B'+str(row)].value ) )
-            if( sheet['B'+str(row)].value == int(studentNum) ):               #  学号在B列
-                logging.debug( ' '*2+str(row)+'  '+sheet['D'+str(row)].value )       #  姓名在D列
-                studentMarks[0].append(file)
-                studentMarks[1].append(studentNum)
-                studentMarks[2].append(sheet['D'+str(row)].value)
-                for (k, v) in COLUMNS_MAP.iteritems():
-                    logging.debug(k + str( sheet[v['column']+str(row)].value ) )  #  课堂平时成绩在J列
-                    studentMarks[v['index']].append(sheet[v['column']+str(row)].value)
-                break
+            if sheet['B'+str(row)].value != int(studentNum):               #  学号在B列
+                continue
+            logging.debug( ' '*2+str(row)+'  '+sheet['D'+str(row)].value )       #  姓名在D列
+            studentMarks[0].append(file)
+            studentMarks[1].append(studentNum)
+            studentMarks[2].append(sheet['D'+str(row)].value)
+            for (k, v) in COLUMNS_MAP.iteritems():
+                logging.debug(k + str( sheet[v['column']+str(row)].value ) )  #  课堂平时成绩在J列
+                studentMarks[v['index']].append(sheet[v['column']+str(row)].value)
+            # 不确定是不是需要
+            break
         logging.error( 'error test')
 
 # Write marks    
