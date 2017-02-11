@@ -12,6 +12,19 @@ import pprint
 STUDENT_COUNT = 33
 DIRNAME = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
 CLASSREG = re.compile(r'\d{7}') # CLASSREG = re.compile(r'\d{7}[zZ]?')  # CLASSREG = re.compile('\d*7')
+COLUMNS_MAP = {
+        ' 课堂平时成绩': {'column': 'J', 'index': 3}
+        '课堂期末成绩': {'column': 'M', 'index': 4}
+        '课堂总成绩': {'column': 'O', 'index': 5}
+        '实践成绩': {'column': 'Q', 'index': 6}
+        '实验成绩': {'column': 'R', 'index': 7}
+        '总成绩': {'column': 'S', 'index': 8}
+        }
+# or use tuple
+# COLUMNS_MAP = (
+#        (' 课堂平时成绩', 'J', 3),
+#       ...
+#       )
 
 logging.disable(logging.CRITICAL)
 # logging.basicConfig( filename='loglearn.txt',level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )                   
@@ -60,21 +73,12 @@ for file in os.listdir(DIRNAME):
             logging.info( 'error test' + str( sheet['B'+str(row)].value ) )
             if( sheet['B'+str(row)].value == int(studentNum) ):               #  学号在B列
                 logging.debug( ' '*2+str(row)+'  '+sheet['D'+str(row)].value )       #  姓名在D列
-                logging.debug(' 课堂平时成绩：'+ str( sheet['J'+str(row)].value ) )  #  课堂平时成绩在J列
-                logging.debug(' 课堂期末成绩：'+ str( sheet['M'+str(row)].value ) )  #  课堂期末成绩在M列
-                logging.debug(' 课堂总成绩：'+ str( sheet['O'+str(row)].value ) )    #  课堂总成绩在O列
-                logging.debug(' 实践成绩：'+ str( sheet['Q'+str(row)].value ) )      #  实践成绩在Q列
-                logging.debug(' 实验成绩：'+ str( sheet['R'+str(row)].value ) )      #  实验成绩在R列
-                logging.debug(' 总成绩：'+ str( sheet['S'+str(row)].value ) )        #  总成绩在S列
                 studentMarks[0].append(file)
                 studentMarks[1].append(studentNum)
                 studentMarks[2].append(sheet['D'+str(row)].value)
-                studentMarks[3].append(sheet['J'+str(row)].value)
-                studentMarks[4].append(sheet['M'+str(row)].value)
-                studentMarks[5].append(sheet['O'+str(row)].value)
-                studentMarks[6].append(sheet['Q'+str(row)].value)
-                studentMarks[7].append(sheet['R'+str(row)].value)
-                studentMarks[8].append(sheet['S'+str(row)].value)                  
+                for (k, v) in COLUMNS_MAP.iteritems():
+                    logging.debug(k + str( sheet[v['column']+str(row)].value ) )  #  课堂平时成绩在J列
+                    studentMarks[v['index']].append(sheet[v['column']+str(row)].value)
                 break
         logging.error( 'error test')
 
