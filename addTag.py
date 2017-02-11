@@ -15,7 +15,7 @@ courseReg = re.compile(r'-(\w{3,11})-')
 performanceTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -27,7 +27,7 @@ performanceTag = [
 labTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -38,7 +38,7 @@ labTag = [
 designTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -49,7 +49,7 @@ designTag = [
 practiceTag = [
     ['学号', ],
     ['姓名', ],
-    ['初始分', ],
+    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -76,12 +76,12 @@ for file in os.listdir(dirname):
                 logging.info(val)
                 sheet.cell(row = 2,column = col).value = val[0]
                 for k in range(3,60):
-                    sheet.cell(row = k,column = col + 3).value = 0
+                    sheet.cell(row = k,column = col + 4).value = 0
                 col +=1
             
             wb.save(fullname)
             count += 1
-            print('one file is written!')
+            print('file: %s has been written!' % (file))
 
         if courseType.group(1) == 'lab':
             logging.info(courseType.group())            
@@ -91,13 +91,14 @@ for file in os.listdir(dirname):
             col = 2
             for val in labTag:
                 logging.info(val)
+                logging.info(val[0])
                 sheet.cell(row = 2 ,column = col).value = val[0]
                 for k in range(3,60):
-                    sheet.cell(row = k,column = col + 3).value = 0
+                    sheet.cell(row = k,column = col + 4).value = 0
                 col +=1            
             wb.save(fullname)
             count += 1            
-            print('one file is written!')
+            print('file: %s has been written!' % (file))
 
         if courseType.group(1) == 'design':
             logging.info(courseType.group())            
@@ -109,11 +110,11 @@ for file in os.listdir(dirname):
                 logging.info(val)
                 sheet.cell(row = 2 ,column = col).value = val[0]
                 for k in range(3,60):
-                    sheet.cell(row = k,column = col + 3).value = 0
+                    sheet.cell(row = k,column = col + 4).value = 0
                 col +=1            
             wb.save(fullname)
             count += 1
-            print('one file is written!')
+            print('file: %s has been written!' % (file))
 
         if courseType.group(1) == 'practice':
             logging.info(courseType.group())            
@@ -125,11 +126,11 @@ for file in os.listdir(dirname):
                 logging.info(val)
                 sheet.cell(row = 2 ,column = col).value = val[0]
                 for k in range(3,60):
-                    sheet.cell(row = k,column = col + 3).value = 0
+                    sheet.cell(row = k,column = col + 4).value = 0
                 col +=1            
             wb.save(fullname)
             count += 1
-            print('one file is written!')
+            print('file: %s has been written!' % (file))
         
 print('total %d files have finished Tag' % (count))
 
