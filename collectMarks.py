@@ -8,7 +8,10 @@ import re
 import logging
 import pprint
 
-classReg = re.compile(r'\d{7}') # classReg = re.compile(r'\d{7}[zZ]?')  # classReg = re.compile('\d*7')
+
+STUDENT_COUNT = 33
+DIRNAME = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
+CLASSREG = re.compile(r'\d{7}') # CLASSREG = re.compile(r'\d{7}[zZ]?')  # CLASSREG = re.compile('\d*7')
 
 logging.disable(logging.CRITICAL)
 # logging.basicConfig( filename='loglearn.txt',level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )                   
@@ -39,21 +42,20 @@ studentMarks = [
     ['总成绩',],
     ]
 # Read marks
-dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
-for file in os.listdir(dirname):
+for file in os.listdir(DIRNAME):
     logging.debug(file)
-    classSearch = classReg.search(file) # a = re.findall(classReg,file)
+    classSearch = CLASSREG.search(file) # a = re.findall(CLASSREG,file)
     if not classSearch or classSearch.group() != className:
         logging.debug('Doesn\' match!')
         continue
     logging.debug(classSearch.group())
     logging.debug(className)
-    fullname = dirname + '\\' + file
+    fullname = DIRNAME + '\\' + file
     wb = openpyxl.load_workbook( fullname)
     sheet = wb.get_active_sheet()
-    for twoDigit in range(33):                   ####
+    for twoDigit in range(STUDENT_COUNT):                   ####
         studentNum = str(int(studentNo) + twoDigit)    #####
-        for row in range(1,130):                  #####
+        for row in range(1,len(sheet.rows)):                  #####
             logging.info('row is:%d',row)
             logging.info( 'error test' + str( sheet['B'+str(row)].value ) )
             if( sheet['B'+str(row)].value == int(studentNum) ):               #  学号在B列
@@ -87,7 +89,7 @@ for val in studentMarks:
         logging.info(val[n])
         sheet.cell(row = 2 + n,column = col).value = val[n]
     col +=1
-newfullname = dirname + '\\' + className + '.xlsx'
+newfullname = DIRNAME + '\\' + className + '.xlsx'
 wb.save(newfullname)
 
 print('Done!')
