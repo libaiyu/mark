@@ -5,6 +5,11 @@
 import openpyxl
 import os
 import re
+import logging
+
+# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+logging.critical('--------Start of program---------')
 
 for k in range(3):
     input("Attention  %d : this will damage all xlsx files' data. Are you sure." % (k + 1))
@@ -24,3 +29,5 @@ for fileName in os.listdir(dirname):
             count += 1
             print('file %s   is clear!' % (fileName))
 print('total %d files is clear!' % (count))
+
+logging.critical('-------End--------')
