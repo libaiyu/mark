@@ -9,11 +9,11 @@ import logging
 import pprint
 
 
-STUDENT_COUNT = 33
+STUDENT_COUNT = 38
 DIRNAME = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
 CLASSREG = re.compile(r'\d{7}') # CLASSREG = re.compile(r'\d{7}[zZ]?')  # CLASSREG = re.compile('\d*7')
 COLUMNS_MAP = {
-        ' 课堂平时成绩': {'column': 'J', 'index': 3},
+        '课堂平时成绩': {'column': 'J', 'index': 3},
         '课堂期末成绩': {'column': 'M', 'index': 4},
         '课堂总成绩': {'column': 'O', 'index': 5},
         '实践成绩': {'column': 'Q', 'index': 6},
@@ -70,7 +70,7 @@ for file in os.listdir(DIRNAME):
         studentNum = str(int(studentNo) + twoDigit)    #####
         for row in range(1,sheet.max_row):                  #####
             logging.info('row is:%d',row)
-            logging.info( 'error test' + str( sheet['B'+str(row)].value ) )
+            logging.info('学号:%s' % str(sheet['B'+str(row)].value))
             if sheet['B'+str(row)].value != int(studentNum):               #  学号在B列
                 continue
             logging.debug( ' '*2+str(row)+'  '+sheet['D'+str(row)].value )       #  姓名在D列
