@@ -1,6 +1,6 @@
 # _*_ coding: utf_8  _*_
 # read marks of many workbooks then write the marks togather for every student.
-# it is too slowly.
+# it is too slowly. 2017-2-11  now it is quickly. 2017-2-12
 
 import openpyxl
 import os
