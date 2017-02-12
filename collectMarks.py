@@ -13,12 +13,12 @@ STUDENT_COUNT = 33
 DIRNAME = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
 CLASSREG = re.compile(r'\d{7}') # CLASSREG = re.compile(r'\d{7}[zZ]?')  # CLASSREG = re.compile('\d*7')
 COLUMNS_MAP = {
-        ' 课堂平时成绩': {'column': 'J', 'index': 3}
-        '课堂期末成绩': {'column': 'M', 'index': 4}
-        '课堂总成绩': {'column': 'O', 'index': 5}
-        '实践成绩': {'column': 'Q', 'index': 6}
-        '实验成绩': {'column': 'R', 'index': 7}
-        '总成绩': {'column': 'S', 'index': 8}
+        ' 课堂平时成绩': {'column': 'J', 'index': 3},
+        '课堂期末成绩': {'column': 'M', 'index': 4},
+        '课堂总成绩': {'column': 'O', 'index': 5},
+        '实践成绩': {'column': 'Q', 'index': 6},
+        '实验成绩': {'column': 'R', 'index': 7},
+        '总成绩': {'column': 'S', 'index': 8},
         }
 # or use tuple
 # COLUMNS_MAP = (
@@ -26,9 +26,9 @@ COLUMNS_MAP = {
 #       ...
 #       )
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 # logging.basicConfig( filename='loglearn.txt',level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )                   
-# logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 # logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
@@ -68,7 +68,7 @@ for file in os.listdir(DIRNAME):
     sheet = wb.get_active_sheet()
     for twoDigit in range(STUDENT_COUNT):                   ####
         studentNum = str(int(studentNo) + twoDigit)    #####
-        for row in range(1,len(sheet.rows)):                  #####
+        for row in range(1,sheet.max_row):                  #####
             logging.info('row is:%d',row)
             logging.info( 'error test' + str( sheet['B'+str(row)].value ) )
             if sheet['B'+str(row)].value != int(studentNum):               #  学号在B列
@@ -77,12 +77,12 @@ for file in os.listdir(DIRNAME):
             studentMarks[0].append(file)
             studentMarks[1].append(studentNum)
             studentMarks[2].append(sheet['D'+str(row)].value)
-            for (k, v) in COLUMNS_MAP.iteritems():
+            for (k, v) in COLUMNS_MAP.items():
                 logging.debug(k + str( sheet[v['column']+str(row)].value ) )  #  课堂平时成绩在J列
                 studentMarks[v['index']].append(sheet[v['column']+str(row)].value)
             # 不确定是不是需要
             break
-        logging.error( 'error test')
+        # logging.error( 'error test')
 
 # Write marks    
 wb = openpyxl.Workbook()
@@ -99,6 +99,7 @@ newfullname = DIRNAME + '\\' + className + '.xlsx'
 wb.save(newfullname)
 
 print('Done!')
+logging.critical('--------End---------')
 
 """
 201510040101
