@@ -76,7 +76,7 @@ for file in os.listdir(DIRNAME):
             logging.debug( ' '*2+str(row)+'  '+sheet['D'+str(row)].value )       #  姓名在D列
             studentMarks[0].append(file)
             studentMarks[1].append(studentNum)
-            studentMarks[2].append(sheet['D'+str(row)].value)
+            studentMarks[2].append(sheet['D'+str(row)].value)            #  姓名在D列
             for (k, v) in COLUMNS_MAP.items():
                 logging.debug(k + str( sheet[v['column']+str(row)].value ) )  #  课堂平时成绩在J列
                 studentMarks[v['index']].append(sheet[v['column']+str(row)].value)
