@@ -119,38 +119,12 @@ class collectmarks():
 
     # copy one class' marks in one sheet. add the course name .    
     def classmark(self, srcdir, dstdir):
-        self.studentmarks = []        
-        for t in self.classlist:
-            logging.info(t);logging.info(t[0]);logging.info(t[1])
-            classN = t[0]            
-            file = t[1]            
-            fullname = srcdir + '\\' + file
-            logging.info(fullname)
-            # copy marks ,add course name            
-            wb = openpyxl.load_workbook( fullname)
-            sheet = wb.get_active_sheet()
-            for row in range(1,sheet.max_row):
-                rowmark = []
-                rowmark.append(file)
-                for col in range(1,sheet.max_column):
-                    rowmark.append(sheet.cell(row = row, column = col).value)
-                self.studentmarks.append(rowmark)
-                logging.info(rowmark)
-#                input('for debug')
-            logging.info(self.studentmarks)
-            
-        # Write marks    
-        wb = openpyxl.Workbook()
-        sheet = wb.get_active_sheet()
-        for row in range(1,len(self.studentmarks)):
-            for col in range(1,len(self.studentmarks[0])):
-                sheet.cell(row = row, column = col + 1).value = self.studentmarks[row - 1][col - 1]        
-        newfullname = dstdir + '\\cj-total' + '.xlsx'
-        wb.save(newfullname)
+
+        pass
+
 
     # collectmarks for students one by one .
     def tidymark(self):
-
 
         studmark = [
             ['课程',],
@@ -171,15 +145,6 @@ class collectmarks():
                 '实验成绩': {'column': 'R', 'index': 7},
                 '总成绩': {'column': 'S', 'index': 8},
                 }
-
-##        studentMarks[0].append(file)
-##        studentMarks[1].append(studentNum)
-##        studentMarks[2].append(sheet['D'+str(row)].value)            #  姓名在D列
-##        for (k, v) in COLUMNS_MAP.items():
-##            logging.debug(k + str( sheet[v['column']+str(row)].value ) )  #  课堂平时成绩在J列
-##            studentMarks[v['index']].append(sheet[v['column']+str(row)].value)
-
-
         
         for test in range(len(self.studentmarks[22])):
             print(self.studentmarks[22][test])     #  column 2 (0,1,2) is student's number.
@@ -210,7 +175,7 @@ def main():
 ##
 ##    collmark.copyall(SRCDIR,DSTDIR)
 ##    collmark.writeall(SRCDIR,DSTDIR)
-    
+#     collmark.allmark(self, srcdir, dstdir)   
 #    collmark.tidymark()
 
 if __name__ == '__main__':
@@ -218,12 +183,3 @@ if __name__ == '__main__':
     main()
     logging.critical('--------End---------')
     
-
-##        COLUMNS_MAP = {
-##                '课堂平时成绩': {'column': 'J', 'index': 3},
-##                '课堂期末成绩': {'column': 'M', 'index': 4},
-##                '课堂总成绩': {'column': 'O', 'index': 5},
-##                '实践成绩': {'column': 'Q', 'index': 6},
-##                '实验成绩': {'column': 'R', 'index': 7},
-##                '总成绩': {'column': 'S', 'index': 8},
-##                }
