@@ -1,3 +1,4 @@
+#! python3
 # _*_ coding: utf_8  _*_
 # copy marks in many workbooks and put them togather for every student.
 
@@ -14,18 +15,28 @@ class collectmarks():
     """
 
     def __init__(self):
+        # the list for storing the classes and courses
         self.classlist = []
+        # the row as the title 
         self.titlerow = []
+        # the list of all rows of all workbooks. 
         self.allrow = []
-        self.tagindex = {}
+        # the dictionary of the title and its index
+        self.titledict = {}
+        # after deleting null cell, we get the new title. 
         self.newtitle = []
+        # according the index keep the nonnull cell. new all rows of all workbooks 
         self.newallrow = []
-        self.markdict = {}
+        # newtitle for dictionary
+        self.newtitled = []
+        # studentnumber as the key, course and marks form the dictionary as the value {studentnum: (course,studentname,[marks]}}
+        self.studentcoursesm = {}
         
         self.coursemark = []
         self.classmark = {}
-        self.studentmarks = []        
+        self.studentm = []        
 
+    # find out the classes and courses in the source directory
     def findclass(self, srcdir, relist):
         for file in os.listdir(srcdir):
             logging.info(file)
@@ -35,6 +46,7 @@ class collectmarks():
                 self.classlist.append((CLASSREG.search(file).group(1),file))     
         print(self.classlist)
 
+    # find the title in anyone workbook
     def findtitle(self, srcdir):
         twoline = 0
         file = self.classlist[0][1]            
@@ -56,7 +68,8 @@ class collectmarks():
                 twoline += 1
                 self.titlerow.append(rowmark)
         print(self.titlerow)
-        
+
+    # copy every row in all workbooks to form a list        
     def copyrows(self, srcdir):
         self.allrow = []   # for store all row marks        
         for t in self.classlist:
@@ -75,30 +88,37 @@ class collectmarks():
                 # add every row marks to form all row marks
                 self.allrow.append(rowmark)
 
+    # find the position of nonnull cells in title, 
     def findindex(self):
-        firstline = ['课程名', '序号', '学    号', None, '姓  名', None, '班  级', None, None, None,   '课堂', None,    '课堂',      '课堂',   None,  '课堂',   None, '实践成绩', '实验成绩', '总成绩', '特殊原因', None, '录入状态', '备  注', None]
-        secondline = ['课程名', None,    None,      None,    None,  None,   None,   None, None, None, '平时成绩', None,'期中成绩',  '期末成绩', None, '总成绩', None,   None,         None,     None,     None,     None,    None,      None,   None]
-        self.tagindex = {}
-        self.tagindex[0] = firstline[0]
+        firstline = ['课程名', '序号', '学    号', None, '姓  名', None, '班  级', None, None, None,
+                     '课堂', None,    '课堂',      '课堂',   None,  '课堂',   None, '实践成绩', '实验成绩',
+                     '总成绩', '特殊原因', None, '录入状态', '备  注', None]
+        secondline = ['课程名', None,    None,      None,    None,  None,   None,   None, None, None,
+                      '平时成绩', None,'期中成绩',  '期末成绩', None, '总成绩', None,   None,      None,
+                      None,     None,     None,    None,      None,   None]
+        self.titledict = {}
+        self.titledict[0] = firstline[0]
         for pos in range(1,len(firstline)):
 #            print(pos, firstline[pos], secondline[pos])
             if firstline[pos] != None and secondline[pos] == None:
-                self.tagindex[pos] = firstline[pos]
+                self.titledict[pos] = firstline[pos]
             if firstline[pos] != None and secondline[pos] != None:
-                self.tagindex[pos] = firstline[pos] + secondline[pos]
-        for k,v in self.tagindex.items():
+                self.titledict[pos] = firstline[pos] + secondline[pos]
+        for k,v in self.titledict.items():
             print(k, v)
-            
-    def newtitle(self,  ):
-        newtitle = []
+
+    # form the new title of all nonnull cells of the title            
+    def newtitlerow(self,  ):
+        self.newtitle = []
         index = [0, 2, 4, 6, 10, 12, 13, 15, 17, 18, 19, 20]            
         for n in index:
-            newtitle.append(self.tagindex[n])
+            self.newtitle.append(self.titledict[n])
         logging.info(self.newtitle)
-            
+
+    # copy the rows that include students' marks according the index  
     def newrows(self,  ):
         self.newallrow = []
-        self.newallrow.append(newtitle)
+        self.newallrow.append(self.newtitle)
         for row in self.allrow:
             if re.compile(r'\d{12}').search(str(row[2])):
                 newrow = []
@@ -106,26 +126,78 @@ class collectmarks():
                 for n in index:
                     newrow.append(row[n])
                 self.newallrow.append(newrow)
-        logging.info(self.newallrow)
-            
-    def markdic(self,  ):
-        newtitled = []
-        index = [10, 12, 13, 15, 17, 18, 19, 20]            
+        # logging.info(self.newallrow)     # it is too much letters to fit display
+
+    # form the dictionary of the students, the value is a list of course, name and marks
+    def studentsmarks(self,  ):
+        self.newtitled = []
+        index = [0, 2, 4, 6, 10, 12, 13, 15, 17, 18, 19, 20]            
         for n in index:
-            newtitled.append(self.tagindex[n])
-        self.markdict.setdefault((self.tagindex[2],self.tagindex[4]), [(self.tagindex[0],newtitled)])
+            self.newtitled.append(self.titledict[n])
+        self.studentcoursesm.setdefault(self.titledict[2], self.newtitled)
         for row in self.allrow:
             if re.compile(r'\d{12}').search(str(row[2])):
                 newrowd = []
-                index = [10, 12, 13, 15, 17, 18, 19, 20]            
+                index = [0, 2, 4, 6, 10, 12, 13, 15, 17, 18, 19, 20]           
                 for n in index:
                     newrowd.append(row[n])
-                student = (row[2],row[4])
+                student = str(row[2])
                 course = row[0]
-                self.markdict.setdefault(student,[])
-                self.markdict[student].append([(row[0],newrowd)])
-        logging.info(self.markdict)
+                name = row[4]
+                self.studentcoursesm.setdefault(student,[])
+                self.studentcoursesm[student].append(newrowd)
+        # logging.info(self.studentcoursesm)     # it is too much letters to fit display
 
+    # output the workbook of all marks
+    def writerows(self, dstdir):
+        wb = openpyxl.Workbook()            
+        sheet = wb.get_active_sheet()
+        # Write title
+        for col in range(len(self.newtitle)):
+            sheet.cell(row = 2, column = col + 2).value = self.newtitle[col]
+        # Write marks
+        for row in range(len(self.newallrow)):     # row is begin from 0 to max
+            for col in range(len(self.newallrow[row])):
+                sheet.cell(row = row + 3, column = col + 2).value = str(self.newallrow[row][col])
+        logging.info(str(row-1) + ' ' + str(col-1) + ': ' + str(self.newallrow[row-1][col-1]))
+        newfullname = dstdir + '\\allmarks' + '.xlsx'
+        wb.save(newfullname)
+        print('All marks have been written.')
+
+    # output the workbooks of marks of classes     
+    def classmarks(self, dstdir):        
+        pass
+        
+    # output the workbooks of marks of courses
+
+    # output the workbooks of marks of students
+    def studentmarks(self, studentnum, dstdir):
+        wb = openpyxl.Workbook()            
+        sheet = wb.get_active_sheet()
+        # Write title
+        for col in range(len(self.newtitle)):
+            sheet.cell(row = 2, column = col + 2).value = self.newtitle[col]
+        # Write marks
+        for row in range(len(self.studentcoursesm[studentnum])):     # row is begin from 0 to max
+            for col in range(len(self.studentcoursesm[studentnum][row])):
+                sheet.cell(row = row + 3, column = col + 2).value = str(self.studentcoursesm[studentnum][row][col])
+                logging.info(str(row) + str(col) + ': ' + str(self.studentcoursesm[studentnum][row][col]))
+        newfullname = dstdir + '\\学号' + studentnum + '.xlsx'
+        wb.save(newfullname)
+        print('Marks of %s have been written.' % (studentnum))
+        
+    # print the marks of courses of the student
+    def pstudentmarks(self, studentnum):
+        print(self.newtitle)
+        print(self.studentcoursesm[studentnum])
+        # or
+        STUDREG = re.compile(studentnum)
+        for rowmark in self.newallrow:
+            if STUDREG.search(str(rowmark[2])):
+                self.studentm.append(rowmark)                
+                print (rowmark)
+
+#############################################
     def copyall(self, srcdir):
         twoline = 0
         self.classmark = {}    # for store marks of all courses, class as key, marks as the values
@@ -163,7 +235,7 @@ class collectmarks():
             self.classmark.setdefault(classname, [])
             self.classmark[classname].append(self.coursemark)
 
-    # copy one class' marks in one sheet. add the course name .     
+    #  output one class' marks in one sheet. add the course name .     
     def writeclass(self, dstdir):        
         for classname,mark in self.classmark.items():
             wb = openpyxl.Workbook()            
@@ -178,22 +250,11 @@ class collectmarks():
                     row += 1
                     for col in range(len(mark[k][r])):
                         sheet.cell(row = row, column = col + 2).value = mark[k][r][col]
-                        logging.info(str(row) + ' ' + str(r) + ' ' + str(col) + ': ' + str(mark[k][r][col]))
             newfullname = dstdir + '\\cj-total-' + classname + '.xlsx'
             wb.save(newfullname)
             print('Marks of %s have been written.' % (classname))
 #            input('any key') 
     
-    def writestudent(self, studentnum):
-        print(self.titlerow)
-        STUDREG = re.compile(studentnum)
-        for rowmark in self.allrow:
-            if STUDREG.search(str(rowmark[2])):
-                self.studentmarks.append(rowmark)                
-                print (rowmark)
-
-    def writeall(self, srcdir, dstdir):
-        pass
 
 def main():
     SRCDIR = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
@@ -209,20 +270,26 @@ def main():
     input('finish copyrows')
     collmark.findindex()
     input('finish findindex')
+    collmark.newtitlerow()
+    input('finish newtitlerow')
     collmark.newrows()
     input('finish newrows')
-    collmark.markdic()
-    input('finish markdic')
+    collmark.studentsmarks()
+    input('finish studentsmarks')
+    collmark.writerows(DSTDIR)
+    input('finish writerows')
+    collmark.classmarks(DSTDIR)
+    input('finish classmark')
+    STUDNUM = input("please input student's number: ")
+    collmark.studentmarks(STUDNUM,DSTDIR)
+    input('finish studentmarks')
+    collmark.pstudentmarks(STUDNUM)
+    input('finish pstudentmarks')
+#####################################     
     collmark.copyall(SRCDIR)
     input('finish copyall')
     collmark.writeclass(DSTDIR)
     input('finish writeclass')
-    
-    STUDNUM = input("please input student's number: ")
-    collmark.writestudent(STUDNUM)
-    input('finish writestudent')
-
-##    collmark.writeall(SRCDIR,DSTDIR)
 
 if __name__ == '__main__':
     logging.critical('--------Start of program---------')
@@ -233,7 +300,7 @@ if __name__ == '__main__':
 
 ##    # copy all marks in one sheet. add the course name .    
 ##    def allmark(self, srcdir, dstdir):
-##        self.studentmarks = []        
+##        self.studentm = []        
 ##        for t in self.classlist:
 ##            logging.info(t);logging.info(t[0]);logging.info(t[1])
 ##            classN = t[0]            
@@ -248,16 +315,16 @@ if __name__ == '__main__':
 ##                rowmark.append(file)
 ##                for col in range(1,sheet.max_column):
 ##                    rowmark.append(sheet.cell(row = row, column = col).value)
-##                self.studentmarks.append(rowmark)
+##                self.studentm.append(rowmark)
 ##                logging.info(rowmark)
 ###                input('for debug')
-##            logging.info(self.studentmarks)
+##            logging.info(self.studentm)
 ##        # Write marks    
 ##        wb = openpyxl.Workbook()
 ##        sheet = wb.get_active_sheet()
-##        for row in range(1,len(self.studentmarks) + 1):
-##            for col in range(1,len(self.studentmarks[0]) + 1):
-##                sheet.cell(row = row, column = col + 1).value = self.studentmarks[row][col]        
+##        for row in range(1,len(self.studentm) + 1):
+##            for col in range(1,len(self.studentm[0]) + 1):
+##                sheet.cell(row = row, column = col + 1).value = self.studentm[row][col]        
 ##        newfullname = dstdir + '\\cj-total' + '.xlsx'
 ##        wb.save(newfullname)   
 
