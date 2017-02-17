@@ -1,9 +1,14 @@
 #! python 3
 # _*_ coding: utf_8  _*_
+
 # During the course, note the performance for the students.
+#
 # select the "课程"，select "加减分的项",input"学号","分值"
+#
 # it will write the "分值"
+#
 # Record can not be written. prompt is not good enough.   2017-2-11-10:50
+#
 # Student's number must be 2 digits, when it is smaller than 10. It should be 0X.  2017-2-11-17:23
 
 import openpyxl
@@ -11,8 +16,8 @@ import os
 import re
 import logging
 
-logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
-# logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
 # find the Chinese words '学生名单' in filename
@@ -68,79 +73,77 @@ practiceTag = [
     ]
 
 # 提示输入信息
-fileList = []
-fullList = []
+filelist = []
+fulllist = []
 k = 0
 dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
 for file in os.listdir(dirname):
     fullname = dirname + '\\' + file
-    fileList.append(file)
-    fullList.append(fullname)     
+    filelist.append(file)
+    fulllist.append(fullname)     
     print(k,file)
     k += 1
-courseNum = input('please input a number for 课程: ')
+courseNum = int(input('please input a number for 课程: '))
 
-courseType = ['0 理论performance',
-              '1 实验lab',
-              '2 课程设计design',
-              '3 认识实习practice']
+tagdict = {'performance':performanceTag, 'lab':labTag, 'design':designTag, 'practice':practiceTag}
+coursetype = courseReg.search(filelist[courseNum]).group(1)
+logging.info(coursetype)
+while True:
+    print(coursetype)
+    item = []
+    k = 2
+    for val in tagdict[coursetype]:
+        print(str(k) + ' ' + str(val) + ' ')
+        k += 1
 
-##courseReg.search(fileList[courseNum])
+##    if coursetype.group(1) == 'lab':
+##        print('lab')
+##        labItem = []
+##        k = 2
+##        for val in labTag:
+##            labItem.append(str(k) + ' ' + str(val) + ' ')
+##            k += 1
+##        for j in range(len(labItem)):
+##            print(labItem[j])
 ##
-##courseList = [performanceTag,
-##              labTag,
-##              designTag,
-##              practiceTag]
+##    if coursetype.group(1) == 'design':
+##        print('design')
+##        designItem = []
+##        k = 2
+##        for val in designTag:
+##            designItem.append(str(k) + ' ' + str(val) + ' ')
+##            k += 1
+##        for j in range(len(designItem)):
+##            print(designItem[j])
+##
+##
+##    if coursetype.group(1) == 'practice':
+##        print('practice')
+##        practiceItem = []
+##        k = 2
+##        for val in practiceTag:
+##            practiceItem.append(str(k) + ' ' + str(val) + ' ')
+##            k += 1
+##        for j in range(len(practiceItem)):
+##            print(practiceItem[j])
+            
+    itemNum = input('please input a numbers for select item: ')
+    stuNum = input("please input two last digitals of select student's number: 05 ")
+    mark = input('please input the mark: ')
 
-print(courseType[0])
-performanceItem = []
-k = 2
-for val in performanceTag:
-    performanceItem.append(str(k) + ' ' + str(val) + ' ')
-    k += 1
-print(performanceItem)
-
-print(courseType[1])
-labItem = []
-k = 2
-for val in labTag:
-    labItem.append(str(k) + ' ' + str(val) + ' ')
-    k += 1
-print(labItem)
-
-print(courseType[2])
-designItem = []
-k = 2
-for val in designTag:
-    designItem.append(str(k) + ' ' + str(val) + ' ')
-    k += 1
-print(designItem)
-
-print(courseType[3])
-practiceItem = []
-k = 2
-for val in practiceTag:
-    practiceItem.append(str(k) + ' ' + str(val) + ' ')
-    k += 1
-print(practiceItem)
-
-itemNum = input('please input a numbers for select item: ')
-stuNum = input("please input two last digitals of select student's number: 05 ")
-mark = input('please input the mark: ')
-
-wb = openpyxl.load_workbook(fullList[int(courseNum)])
-logging.critical(fullList[int(courseNum)])
-sheet = wb.get_active_sheet()
-for row in range(1,60):
-    logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
-    if str(sheet['b'+str(row)].value)[-2:] == stuNum:                      #  学号在B列
-        # Write
-        logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
-        sheet.cell(row = row,column = int(itemNum)).value += int(mark)
-        logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
-        wb.save(fullList[int(courseNum)])
-        print('one cell is written!')
-        break
+    wb = openpyxl.load_workbook(fulllist[int(courseNum)])
+    logging.critical(fulllist[int(courseNum)])
+    sheet = wb.get_active_sheet()
+    for row in range(1,60):
+        logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
+        if str(sheet['b'+str(row)].value)[-2:] == stuNum:                      #  学号在B列
+            # Write
+            logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
+            sheet.cell(row = row,column = int(itemNum)).value += int(mark)
+            logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
+            wb.save(fulllist[int(courseNum)])
+            print('one cell is written!')
+            break
 
 logging.critical('-------End--------')
 
