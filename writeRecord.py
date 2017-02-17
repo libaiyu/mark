@@ -90,60 +90,33 @@ coursetype = courseReg.search(filelist[courseNum]).group(1)
 logging.info(coursetype)
 while True:
     print(coursetype)
-    item = []
+    item = {}
     k = 2
     for val in tagdict[coursetype]:
         print(str(k) + ' ' + str(val) + ' ')
-        k += 1
-
-##    if coursetype.group(1) == 'lab':
-##        print('lab')
-##        labItem = []
-##        k = 2
-##        for val in labTag:
-##            labItem.append(str(k) + ' ' + str(val) + ' ')
-##            k += 1
-##        for j in range(len(labItem)):
-##            print(labItem[j])
-##
-##    if coursetype.group(1) == 'design':
-##        print('design')
-##        designItem = []
-##        k = 2
-##        for val in designTag:
-##            designItem.append(str(k) + ' ' + str(val) + ' ')
-##            k += 1
-##        for j in range(len(designItem)):
-##            print(designItem[j])
-##
-##
-##    if coursetype.group(1) == 'practice':
-##        print('practice')
-##        practiceItem = []
-##        k = 2
-##        for val in practiceTag:
-##            practiceItem.append(str(k) + ' ' + str(val) + ' ')
-##            k += 1
-##        for j in range(len(practiceItem)):
-##            print(practiceItem[j])
-            
+        item[k] = str(val)
+        k += 1            
     itemNum = input('please input a numbers for select item: ')
-    stuNum = input("please input two last digitals of select student's number: 05 ")
-    mark = input('please input the mark: ')
+    while True:
+        stuNum = input("please input two last digitals of select student's number: 05 ")
+        mark = input('please input the mark: ')
 
-    wb = openpyxl.load_workbook(fulllist[int(courseNum)])
-    logging.critical(fulllist[int(courseNum)])
-    sheet = wb.get_active_sheet()
-    for row in range(1,60):
-        logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
-        if str(sheet['b'+str(row)].value)[-2:] == stuNum:                      #  学号在B列
-            # Write
-            logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
-            sheet.cell(row = row,column = int(itemNum)).value += int(mark)
-            logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
-            wb.save(fulllist[int(courseNum)])
-            print('one cell is written!')
-            break
+        wb = openpyxl.load_workbook(fulllist[int(courseNum)])
+        logging.critical(fulllist[int(courseNum)])
+        sheet = wb.get_active_sheet()
+        for row in range(1,60):
+            logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
+            if str(sheet['b'+str(row)].value)[-2:] == stuNum:                      #  学号在B列
+                # Write
+                logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
+                sheet.cell(row = row,column = int(itemNum)).value += int(mark)
+                logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
+                wb.save(fulllist[int(courseNum)])
+                print('one cell is written!')
+                break
+            
+        if itemNum in ['6', '7', '8']:
+            itemNum = input('please input a numbers for select item: ')
 
 logging.critical('-------End--------')
 
