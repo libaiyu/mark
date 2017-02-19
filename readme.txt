@@ -6,7 +6,7 @@
 接着，运行下列程序。
 运行时，顺序不能搞错了。
 1，clearExcel.py
-2, addNumName.py
+2, writeNumName.py
 3, addTag.py
 4, writeRecord.py
 

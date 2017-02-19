@@ -15,6 +15,7 @@ class collectmarks():
     """
 
     def __init__(self):
+        
         # the list for storing the classes and courses
         self.classlist = []
         # the row as the title 
@@ -33,11 +34,11 @@ class collectmarks():
         self.studentcoursesm = {}
         
         self.coursemark = []
-        self.classmark = {}
+        self.classmarkdict = {}
         self.studentm = []        
 
     # find out the classes and courses in the source directory
-    def findclass(self, srcdir, relist):
+    def findclass(self, srcdir, relist):        
         for file in os.listdir(srcdir):
             logging.info(file)
             CLASSREG = re.compile(relist)
@@ -200,7 +201,7 @@ class collectmarks():
 #############################################
     def copyall(self, srcdir):
         twoline = 0
-        self.classmark = {}    # for store marks of all courses, class as key, marks as the values
+        self.classmarkdict = {}    # for store marks of all courses, class as key, marks as the values
         self.allrow = []   # for store all row marks
         for t in self.classlist:
             self.coursemark = []   # for store marks of one course
@@ -216,8 +217,8 @@ class collectmarks():
                 rowmark = [file]               # for store marks of one row
                 for col in range(1,sheet.max_column):
                     rowmark.append(sheet.cell(row = row, column = col).value)
-                self.allrow.append(rowmark)      # add one row marks to form all row marks                
-                self.coursemark.append(rowmark)      # add one row marks to form a course marks
+                self.allrow.append(rowmark)      # add every row marks to form all row marks                
+                self.coursemark.append(rowmark)      # add every row marks of one course to form a course marks
                 # get the title line. it has two lines.
 ##                print(rowmark[2])                
 ##                print(twoline)
@@ -232,12 +233,12 @@ class collectmarks():
 ##            print(self.titlerow)                
 #            logging.info(self.allrow)
 #            input('any key')
-            self.classmark.setdefault(classname, [])
-            self.classmark[classname].append(self.coursemark)
+            self.classmarkdict.setdefault(classname, [])   
+            self.classmarkdict[classname].append(self.coursemark)   # the dictionary of classmark classname as key, courses' marks as value 
 
     #  output one class' marks in one sheet. add the course name .     
     def writeclass(self, dstdir):        
-        for classname,mark in self.classmark.items():
+        for classname,mark in self.classmarkdict.items():
             wb = openpyxl.Workbook()            
             sheet = wb.get_active_sheet()
             # Write marks 

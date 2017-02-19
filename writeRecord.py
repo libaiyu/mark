@@ -83,6 +83,8 @@ for file in os.listdir(dirname):
     fulllist.append(fullname)     
     print(k,file)
     k += 1
+fulllist.append(fullname)
+logging.critical(fulllist)
 courseNum = int(input('please input a number for 课程: '))
 
 tagdict = {'performance':performanceTag, 'lab':labTag, 'design':designTag, 'practice':practiceTag}
@@ -96,27 +98,27 @@ while True:
         print(str(k) + ' ' + str(val) + ' ')
         item[k] = str(val)
         k += 1            
-    itemNum = input('please input a numbers for select item: ')
+    itemNum = int(input('please input a numbers for select item: '))
     while True:
         stuNum = input("please input two last digitals of select student's number: 05 ")
         mark = input('please input the mark: ')
-
-        wb = openpyxl.load_workbook(fulllist[int(courseNum)])
-        logging.critical(fulllist[int(courseNum)])
+        
+        logging.critical(fulllist[courseNum])
+        wb = openpyxl.load_workbook(fulllist[courseNum])
         sheet = wb.get_active_sheet()
-        for row in range(1,60):
+        for row in range(1,sheet.max_row):
             logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
             if str(sheet['b'+str(row)].value)[-2:] == stuNum:                      #  学号在B列
                 # Write
-                logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之前，cell的值
-                sheet.cell(row = row,column = int(itemNum)).value += int(mark)
-                logging.debug(sheet.cell(row = row,column = int(itemNum)).value)   # 写之后，cell的值
-                wb.save(fulllist[int(courseNum)])
+                logging.debug(sheet.cell(row = row,column = itemNum).value)   # 写之前，cell的值
+                sheet.cell(row = row,column = itemNum).value += int(mark)
+                logging.debug(sheet.cell(row = row,column = itemNum).value)   # 写之后，cell的值
+                wb.save(fulllist[courseNum])
                 print('one cell is written!')
                 break
             
-        if itemNum in ['6', '7', '8']:
-            itemNum = input('please input a numbers for select item: ')
+        if itemNum in [6, 7, 8]:
+            iitemNum = int(input('please input a numbers for select item: '))
 
 logging.critical('-------End--------')
 
