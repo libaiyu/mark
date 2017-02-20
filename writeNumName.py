@@ -1,3 +1,4 @@
+#! python 3
 # _*_ coding: utf_8  _*_
 # Read the number and name of the students from the file that include "学生名单".
 # Then write the number and name of the students to the new files that will note the mark for students.
@@ -37,14 +38,14 @@ for file in os.listdir(dirname):
         wb = openpyxl.load_workbook(fullname)
         sheet = wb.get_active_sheet()
         # Read
-        for row in range(1,60):
+        for row in range(1,sheet.max_row):
             logging.debug(sheet['b'+str(row)].value)           #  学号在B列
             if sheet['b'+str(row)].value:                      #  学号在B列
-                logging.debug(sheet['d'+str(row)].value)                   #  姓名在d列
+                logging.debug(sheet['d'+str(row)].value)              #  姓名在d列
                 students[0].append(str(sheet['B'+str(row)].value))    #  学号在B列 
                 students[1].append(sheet['d'+str(row)].value)         #  姓名在D列
-                students[2].append(85)         #  总分初始值为85
-                students[3].append(85)         #  初始分设定为85
+                students[2].append(65)         #  总分初始值为65
+                students[3].append(65)         #  初始分设定为65
 
         # write the number and name of the students to the new files that will note the mark for students.
         count = 0

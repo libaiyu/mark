@@ -1,15 +1,13 @@
 #! python 3
 # _*_ coding: utf_8  _*_
 
-# During the course, note the performance for the students.
-#
-# select the "课程"，select "加减分的项",input"学号","分值"
-#
-# it will write the "分值"
-#
-# Record can not be written. prompt is not good enough.   2017-2-11-10:50
-#
-# Student's number must be 2 digits, when it is smaller than 10. It should be 0X.  2017-2-11-17:23
+'''
+During the course, note the performance for the students.
+select the "课程"，select "加减分的项",input"学号","分值"
+it will write the "分值"
+Record can not be written. prompt is not good enough.   2017-2-11-10:50
+Student's number must be 2 digits. When it is smaller than 10, It should be 0X.  2017-2-11-17:23
+'''
 
 import openpyxl
 import os
@@ -84,7 +82,6 @@ for file in os.listdir(dirname):
     print(k,file)
     k += 1
 fulllist.append(fullname)
-logging.critical(fulllist)
 courseNum = int(input('please input a number for 课程: '))
 
 tagdict = {'performance':performanceTag, 'lab':labTag, 'design':designTag, 'practice':practiceTag}

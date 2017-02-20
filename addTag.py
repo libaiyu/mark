@@ -1,5 +1,5 @@
 # _*_ coding: utf_8  _*_
-# Add the tag
+# Add the tag. initial value is 0.
 
 import openpyxl
 import os
@@ -75,7 +75,7 @@ for file in os.listdir(dirname):
             for val in performanceTag:
                 logging.info(val)
                 sheet.cell(row = 2,column = col).value = val[0]
-                for k in range(3,60):
+                for k in range(3,sheet.max_row + 1):
                     sheet.cell(row = k,column = col + 4).value = 0
                 col +=1
             
@@ -93,7 +93,7 @@ for file in os.listdir(dirname):
                 logging.info(val)
                 logging.info(val[0])
                 sheet.cell(row = 2 ,column = col).value = val[0]
-                for k in range(3,60):
+                for k in range(3,sheet.max_row + 1):
                     sheet.cell(row = k,column = col + 4).value = 0
                 col +=1            
             wb.save(fullname)
@@ -109,7 +109,7 @@ for file in os.listdir(dirname):
             for val in designTag:
                 logging.info(val)
                 sheet.cell(row = 2 ,column = col).value = val[0]
-                for k in range(3,60):
+                for k in range(3,sheet.max_row + 1):
                     sheet.cell(row = k,column = col + 4).value = 0
                 col +=1            
             wb.save(fullname)
@@ -125,7 +125,7 @@ for file in os.listdir(dirname):
             for val in practiceTag:
                 logging.info(val)
                 sheet.cell(row = 2 ,column = col).value = val[0]
-                for k in range(3,60):
+                for k in range(3,sheet.max_row + 1):
                     sheet.cell(row = k,column = col + 4).value = 0
                 col +=1            
             wb.save(fullname)
