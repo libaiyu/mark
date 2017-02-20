@@ -67,7 +67,6 @@ for file in os.listdir(dirname):
         fulllist.append(fullname)     
         print(k,file)
         k += 1
-fulllist.append(fullname)
 courseNum = int(input('\n please input a number for 课程: '))
 
 tagdict = {'performance':performanceTag, 'lab':labTag, 'design':designTag, 'practice':practiceTag}
@@ -102,7 +101,14 @@ while not finish:
             print(stuNum,' 总分是：', sheet.cell(row = row,column = 4).value)
             break
     finish = input('input any letter to finish.')
+marks = []
+for row in range(3,sheet.max_row):
+    marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value))
 wb.save(fulllist[courseNum])
+marks.sort(reverse=True)
+print('前8名为：', marks[:8])
+logging.critical('---------------')
+print('后8名为：', marks[-8:])
 
 logging.critical('-------End--------')
 
