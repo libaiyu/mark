@@ -13,9 +13,9 @@ logging.critical('--------Start of program---------')
 courseReg = re.compile(r'-(\w{3,11})-')
 
 performanceTag = [
-    ['学号', ],
-    ['姓名', ],
-    ['总分',],['初始分',],
+##    ['学号', ],
+##    ['姓名', ],
+##    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -25,9 +25,9 @@ performanceTag = [
     ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],['作业8',],
     ]
 labTag = [
-    ['学号', ],
-    ['姓名', ],
-    ['总分',],['初始分',],
+##    ['学号', ],
+##    ['姓名', ],
+##    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -36,9 +36,9 @@ labTag = [
     ['报告1',],['报告2',],['报告3',],['报告4',],    
     ]
 designTag = [
-    ['学号', ],
-    ['姓名', ],
-    ['总分',],['初始分',],
+##    ['学号', ],
+##    ['姓名', ],
+##    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -47,9 +47,9 @@ designTag = [
     ['报告1',],['报告2',],    
     ]
 practiceTag = [
-    ['学号', ],
-    ['姓名', ],
-    ['总分',],['初始分',],
+##    ['学号', ],
+##    ['姓名', ],
+##    ['总分',],['初始分',],
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -71,12 +71,12 @@ for file in os.listdir(dirname):
             wb = openpyxl.load_workbook(fullname)
             sheet = wb.get_active_sheet()
             # Write the tag 
-            col = 2
+            col = 6
             for val in performanceTag:
                 logging.info(val)
                 sheet.cell(row = 2,column = col).value = val[0]
                 for k in range(3,sheet.max_row + 1):
-                    sheet.cell(row = k,column = col + 4).value = 0
+                    sheet.cell(row = k,column = col).value = 0
                 col +=1
             
             wb.save(fullname)
@@ -88,13 +88,13 @@ for file in os.listdir(dirname):
             wb = openpyxl.load_workbook(fullname)
             sheet = wb.get_active_sheet()
             # Write the tag 
-            col = 2
+            col = 6
             for val in labTag:
                 logging.info(val)
                 logging.info(val[0])
                 sheet.cell(row = 2 ,column = col).value = val[0]
                 for k in range(3,sheet.max_row + 1):
-                    sheet.cell(row = k,column = col + 4).value = 0
+                    sheet.cell(row = k,column = col).value = 0
                 col +=1            
             wb.save(fullname)
             count += 1            
@@ -105,12 +105,12 @@ for file in os.listdir(dirname):
             wb = openpyxl.load_workbook(fullname)
             sheet = wb.get_active_sheet()
             # Write the tag 
-            col = 2
+            col = 6
             for val in designTag:
                 logging.info(val)
                 sheet.cell(row = 2 ,column = col).value = val[0]
                 for k in range(3,sheet.max_row + 1):
-                    sheet.cell(row = k,column = col + 4).value = 0
+                    sheet.cell(row = k,column = col).value = 0
                 col +=1            
             wb.save(fullname)
             count += 1
@@ -121,12 +121,12 @@ for file in os.listdir(dirname):
             wb = openpyxl.load_workbook(fullname)
             sheet = wb.get_active_sheet()
             # Write the tag 
-            col = 2
+            col = 6
             for val in practiceTag:
                 logging.info(val)
                 sheet.cell(row = 2 ,column = col).value = val[0]
                 for k in range(3,sheet.max_row + 1):
-                    sheet.cell(row = k,column = col + 4).value = 0
+                    sheet.cell(row = k,column = col).value = 0
                 col +=1            
             wb.save(fullname)
             count += 1
