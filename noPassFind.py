@@ -36,7 +36,7 @@ for file in os.listdir():
         fullname = dirname + '\\' + file
         wb = openpyxl.load_workbook( fullname )
         sheet = wb.get_active_sheet()
-        for row in range(3,150):
+        for row in range(3,sheet.max_row + 1):
             logging.info('row is:%d',row)
             logging.info( str( sheet['J'+str(row)].value ) )
             if sheet['J'+str(row)].value:

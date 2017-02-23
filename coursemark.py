@@ -66,33 +66,32 @@ for file in os.listdir(dirname):
         filelist.append(file)
         fulllist.append(fullname)     
         print(k,file)
-        k += 1
-courseNum = int(input('\n please input a number for 课程: '))
-
+        k += 1      
 tagdict = {'performance':performanceTag, 'lab':labTag, 'design':designTag, 'practice':practiceTag}
+courseNum = int(input('\n please input a number for 课程: '))    
 coursetype = courseReg.search(filelist[courseNum]).group(1)
-logging.info(coursetype)
-
-print(coursetype)
-item = {}
-k = 6
-for val in tagdict[coursetype]:
-    print(str(k) + ' ' + str(val) + ' ')
-    item[k] = str(val)
-    k += 1
-    
+   
 logging.critical(fulllist[courseNum])
 wb = openpyxl.load_workbook(fulllist[courseNum])
 sheet = wb.get_active_sheet()
+
 finish = 0
-while not finish:
+while not finish:  
+    print(coursetype)
+    item = {}
+    k = 6
+    for val in tagdict[coursetype]:
+        print(str(k) + ' ' + str(val) + ' ')
+        item[k] = str(val)
+        k += 1
+
     itemNum = int(input('\n please input a numbers for select item: '))
-    stuNum = input("\n please input two last digitals of select student's number: 05 ")
+    stuNum = input("\n please input three last digitals of select student's number: 205 ")
     mark = input('\n please input the mark: ')
     
-    for row in range(3,sheet.max_row):
-        logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
-        if str(sheet['b'+str(row)].value)[-2:] == stuNum:                   #  学号在B列
+    for row in range(3,sheet.max_row + 1):
+        logging.debug(str(sheet['b'+str(row)].value)[-3:])           #  学号在B列
+        if str(sheet['b'+str(row)].value)[-3:] == stuNum:                   #  学号在B列
             # Write
             logging.critical(sheet.cell(row = row,column = itemNum).value)   # 写之前，cell的值
             sheet.cell(row = row,column = itemNum).value += int(mark)        # 加上要加减的分数
@@ -102,13 +101,17 @@ while not finish:
             break
     finish = input('input any letter to finish.')
 marks = []
-for row in range(3,sheet.max_row):
-    marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value))
+for row in range(3,sheet.max_row + 1):
+    marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
 wb.save(fulllist[courseNum])
 marks.sort(reverse=True)
-print('前8名为：', marks[:8])
+print('前5名为：')
+for k in marks[:5]:
+    print(k)
 logging.critical('---------------')
-print('后8名为：', marks[-8:])
+print('后5名为：')
+for k in marks[-5:]:
+    print(k)
 
 logging.critical('-------End--------')
 

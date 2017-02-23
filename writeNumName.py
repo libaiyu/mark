@@ -16,7 +16,7 @@ logging.critical('--------Start of program---------')
 # find the file that include '学生名单' in file
 ChineseReg = re.compile(r'学生名单')
 # find the class
-classReg = re.compile(r'\d{7}')
+classReg = re.compile(r'\d{7}(-\d)?')
 # find the course
 courseReg = re.compile(r'-(\w{3,11})-')
 
@@ -38,7 +38,7 @@ for file in os.listdir(dirname):
         wb = openpyxl.load_workbook(fullname)
         sheet = wb.get_active_sheet()
         # Read
-        for row in range(1,sheet.max_row):
+        for row in range(1,sheet.max_row + 1):
             logging.debug(sheet['b'+str(row)].value)           #  学号在B列
             if sheet['b'+str(row)].value:                      #  学号在B列
                 logging.debug(sheet['d'+str(row)].value)              #  姓名在d列

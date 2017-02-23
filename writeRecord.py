@@ -104,7 +104,7 @@ while not finish:
     stuNum = input("\n please input two last digitals of select student's number: 05 ")
     mark = input('\n please input the mark: ')
     
-    for row in range(3,sheet.max_row):
+    for row in range(3,sheet.max_row + 1):
         logging.debug(str(sheet['b'+str(row)].value)[-2:])           #  学号在B列
         if str(sheet['b'+str(row)].value)[-2:] == stuNum:                   #  学号在B列
             # Write
@@ -116,7 +116,7 @@ while not finish:
             break
     finish = input("input any letter to finish. display all students' mark, then end.")
 marks = []
-for row in range(3,sheet.max_row):
+for row in range(3,sheet.max_row + 1):
     marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value))
 wb.save(fulllist[courseNum])
 marks.sort(reverse=True)

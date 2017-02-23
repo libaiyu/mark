@@ -18,6 +18,8 @@ class collectmarks():
         
         # the list for storing the classes and courses
         self.classlist = []
+        # the list of tuple that incluse coursename+classname and filename
+        self.courseclass = []
         # the row as the title 
         self.titlerow = []
         # the list of all rows of all workbooks. 
@@ -35,10 +37,10 @@ class collectmarks():
         
         self.coursemark = []
         self.classmarkdict = {}
-        self.studentm = []        
+        self.studentm = []
 
-    # find out the classes and courses in the source directory
-    def findclass(self, srcdir, relist):        
+    def findclass(self, srcdir, relist):
+        # find out the classes and courses in the source directory
         for file in os.listdir(srcdir):
             logging.info(file)
             CLASSREG = re.compile(relist)
@@ -46,6 +48,20 @@ class collectmarks():
                 # tuple as a element of the list
                 self.classlist.append((CLASSREG.search(file).group(1),file))     
         print(self.classlist)
+
+    def findbook(self, srcdir, coursename, classname):
+        # find the correct workbook.
+        for file in os.listdir(srcdir):
+            logging.info(file)
+            COURSEREG = re.compile(coursename)
+            CLASSREG = re.compile(classname)
+            if COURSEREG.search(file) and CLASSREG.search(file):
+                coursen = COURSEREG.search(file).group()
+                classn = CLASSREG.search(file).group()
+                # tuple as a element of the list
+                self.courseclass.append((coursen + classn, file))
+        print(self.courseclass)
+        
 
     # find the title in anyone workbook
     def findtitle(self, srcdir):
@@ -55,7 +71,7 @@ class collectmarks():
         logging.info(fullname)         
         wb = openpyxl.load_workbook( fullname)
         sheet = wb.get_active_sheet()
-        for row in range(1,sheet.max_row):
+        for row in range(1,sheet.max_row + 1):
             # rowmark: store marks of one row
             # the first element of every row is file name
             rowmark = [file]       
@@ -69,9 +85,10 @@ class collectmarks():
                 twoline += 1
                 self.titlerow.append(rowmark)
         print(self.titlerow)
+        
 
-    # copy every row in all workbooks to form a list        
     def copyrows(self, srcdir):
+        # copy every row in all workbooks to form a list
         self.allrow = []   # for store all row marks        
         for t in self.classlist:
             file = t[1]            
@@ -80,7 +97,7 @@ class collectmarks():
             # copy row marks ,add course name            
             wb = openpyxl.load_workbook( fullname)
             sheet = wb.get_active_sheet()
-            for row in range(1,sheet.max_row):
+            for row in range(1,sheet.max_row + 1):
                 # rowmark: store marks of one row
                 # the first element of every row is file name
                 rowmark = [file]       
@@ -115,9 +132,9 @@ class collectmarks():
         for n in index:
             self.newtitle.append(self.titledict[n])
         logging.info(self.newtitle)
-
-    # copy the rows that include students' marks according the index  
+  
     def newrows(self,  ):
+        # copy the rows that include students' marks according the index
         self.newallrow = []
         self.newallrow.append(self.newtitle)
         for row in self.allrow:
@@ -166,7 +183,8 @@ class collectmarks():
         print('All marks have been written.')
 
     # output the workbooks of marks of classes     
-    def classmarks(self, dstdir):        
+    def classmarks(self, classname, dstdir):
+        
         pass
         
     # output the workbooks of marks of courses
@@ -212,7 +230,7 @@ class collectmarks():
             # copy marks ,add course name            
             wb = openpyxl.load_workbook( fullname)
             sheet = wb.get_active_sheet()
-            for row in range(1,sheet.max_row):
+            for row in range(1,sheet.max_row + 1):
                 # the first element of every row is file name(include course name)
                 rowmark = [file]               # for store marks of one row
                 for col in range(1,sheet.max_column):
@@ -263,10 +281,15 @@ def main():
     CLASSRE = '-(\d{7}z?)\.' # CLASSREG = re.compile(r'\d{7}[zZ]?')
     
     collmark = collectmarks()
+
+    collmark.findbook(SRCDIR, '模拟电子技术基础', '1520603')
+    input('finish findbook')
+
     CLASSLIST = collmark.findclass(SRCDIR,CLASSRE)
     input('finish findclass')
     collmark.findtitle(SRCDIR)
     input('finish findtitle')
+    
     collmark.copyrows(SRCDIR)
     input('finish copyrows')
     collmark.findindex()
@@ -280,7 +303,7 @@ def main():
     collmark.writerows(DSTDIR)
     input('finish writerows')
     collmark.classmarks(DSTDIR)
-    input('finish classmark')
+    input('finish classmarks')
     STUDNUM = input("please input student's number: ")
     collmark.studentmarks(STUDNUM,DSTDIR)
     input('finish studentmarks')
@@ -311,7 +334,7 @@ if __name__ == '__main__':
 ##            # copy marks ,add course name            
 ##            wb = openpyxl.load_workbook( fullname)
 ##            sheet = wb.get_active_sheet()
-##            for row in range(1,sheet.max_row):
+##            for row in range(1,sheet.max_row + 1):
 ##                rowmark = []
 ##                rowmark.append(file)
 ##                for col in range(1,sheet.max_column):
