@@ -1,6 +1,6 @@
 #! python3
 # _*_ coding: utf_8  _*_
-# copy marks in many workbooks and put them togather for every student.
+# copy the remark from a temp workbook, then write to the remark workbook.
 
 import openpyxl
 import os

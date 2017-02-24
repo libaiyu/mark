@@ -10,26 +10,28 @@ import logging
 # logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 
-class collectmarks():
+class CollectMarks():
     """    collect marks of the students in several courses.    
     """
 
+
     def __init__(self):
-        
+        # 构造函数
+
+        # the list of the files' name in the given directory.
         self.filelist = []
+        # the list of the files' full name.
         self.fulllist = []
-        
-        # the list for storing the classes and courses
+        # the list of the classes and courses.
         self.classlist = []
-        # the list of tuple that incluse coursename+classname and filename
+        # the list of tuple that incluse coursename+classname and filename.
         self.courseclass = []
-        # the row as the tag 
+        # the row of the tag.
         self.tagrow = []
         # the list of all rows of one workbook. 
         self.bookrow = []
-        # the list of the tag and its index
+        # the list of the tag and its index.
         self.taglist = []
-        # after deleting null cell, we get the new tag. 
         
     def listfile(self, srcdir):
         # list the files in the given directory. produce the list of the file names
@@ -43,6 +45,18 @@ class collectmarks():
             print(k,file)
             k += 1
         return self.fulllist
+    
+    def findcell(self, workbook, cell_str):
+        # find the cell_string in the given workbook, return the row and column of this cell.
+        wb = openpyxl.load_workbook(workbook)
+        sheet = wb.get_active_sheet()
+        for row in range(1,sheet.max_row + 1):
+            for col in range(1,sheet.max_column + 1):
+                if str(sheet.cell(row=row, column=col).value) == cell_str:
+                    return row, col
+        return "No", "No"
+                    
+        # print(self.tagrow)
 
     def findtag(self, workbook):
         # find the tag in given workbook
@@ -115,8 +129,8 @@ def main():
     SRCDIR = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
     DSTDIR = 'd:\\_PythonWorks\\excelOperate\\cjcl-2016201701'
     CLASSRE = '-(\d{7}z?)\.' # CLASSREG = re.compile(r'\d{7}[zZ]?')
-    
-    collmark = collectmarks()
+    CELL_STR = 'test2'    # '周媛媛'
+    collmark = CollectMarks()
 
     files = collmark.listfile(SRCDIR)
     input('finish listfile')
@@ -124,7 +138,9 @@ def main():
     book = files[coursenum]
     input('finish find book')
 
-    
+    ROW, COL = collmark.findcell(book, CELL_STR)
+    print(ROW, COL)
+    input('finish findcell')
     collmark.findtag(book)
     input('finish findtag')
     collmark.findindex()
