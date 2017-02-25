@@ -59,7 +59,20 @@ practice_tag = [
 filelist = []
 fulllist = []
 k = 0
-DIRNAME = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
+try:
+    DIRNAME = open('d:\\directoryname.txt').read()
+except IOError:
+    print('No such filename.')
+    DIRNAME = input('Please input the directory name:')
+    f = open('d:\\directoryname.txt', 'w')
+    f.write(DIRNAME)
+    f.close()
+    print('Directory name has been written in d:\\directory.txt.')
+    pass
+else:
+    print('We have got directory name in d:\\directory.txt.')
+    pass
+
 for file in os.listdir(DIRNAME):
     fullname = DIRNAME + '\\' + file
     if not Chinese_reg.search(file):    # Chinese_reg = re.compile(r'学生名单')
