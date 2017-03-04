@@ -2,10 +2,12 @@
 # _*_ coding: utf_8  _*_
 
 def filesele( filelist, regex):
+    'select the file name that according to the regular express.'
+    
     fileselect = []
     for file in filelist:
         # slect the files that not fit regex.    
-        if not regex.search( file):
+        if regex.search( file):
             fileselect.append( file)
     return fileselect
 
@@ -13,23 +15,22 @@ def filesele( filelist, regex):
 import re
 
 import getdir
-from getfile import *
 
 def test():
-    ChineseReg = re.compile(r'学生名单')
     # Get the directory name.
     DIRNAME = getdir.getdir()
     # Get the filename list.
     FILELIST = os.listdir( DIRNAME)
     k = 0
-    for line in FILELIST:
-        print(k, line)
+    for file in FILELIST:
+        print(k, file)
         k += 1
-    filese = filesele( FILELIST, ChineseReg)
+    course_reg = re.compile(r'-([a-z]{3,11})-')
+    filese = filesele( FILELIST, course_reg)
     k = 0
-    for line in filese:
-        print(k, line)
+    for file in filese:
+        print(k, file)
         k += 1
-
+        
 if __name__ == '__main__':
     test()

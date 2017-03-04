@@ -15,7 +15,6 @@ import os
 import re
 
 import getdir
-from getfile import *
 from getfull import *
 from filesele import *
 
@@ -30,7 +29,7 @@ Chinese_reg = re.compile(r'学生名单')
 # class
 class_reg = re.compile(r'\d{7}')
 # course
-course_reg = re.compile(r'-(\[a-z]{3,11})-')
+course_reg = re.compile(r'-([a-z]{3,11})-')
 
 performance_tag = [
     ['旷课',],
@@ -70,8 +69,8 @@ tagdict = {'performance':performance_tag,
 DIRNAME = getdir.getdir()
 # Get the filename list.
 FILELIST = os.listdir( DIRNAME)
-# Get the filename list not include "学生名单".
-filelist = filesele( FILELIST, Chinese_reg)
+# Get the filename list include coursetype.
+filelist = filesele( FILELIST, course_reg)
 # Prompt the number and filename to select.
 k = 0
 for line in filelist:

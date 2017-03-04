@@ -1,4 +1,5 @@
 #! python3
+# Get the directory name in this module.
 
 def getdir():
     FILE = 'd:\\_PythonWorks\\mark\\temp\\directoryfile.txt'

@@ -2,7 +2,7 @@
 # _*_ coding: utf_8  _*_
 # Read the number and name of the students from the file that include "学生名单".
 # Then write the number and name of the students to the new files that will note the mark for students.
-# find a bug. list of students need initial in the loop. not out of the loop.
+# find a bug. list of students need initial in the loop. not out of the loop. 2017-2-26.
 
 import openpyxl
 import os
@@ -18,7 +18,7 @@ ChineseReg = re.compile(r'学生名单')
 # find the class
 classReg = re.compile(r'\d{7}(-\d)?')
 # find the course
-courseReg = re.compile(r'-(\w{3,11})-')
+courseReg = re.compile(r'-([a-z]{3,11})-')
 
 dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
 for file in os.listdir(dirname):

@@ -24,7 +24,7 @@ ChineseReg = re.compile(r'学生名单')
 # find the class
 classReg = re.compile(r'\d{7}')
 # find the course
-courseReg = re.compile(r'-(\w{3,11})-')
+course_reg = re.compile(r'-([a-z]{3,11})-')
 
 performanceTag = [
     ['学号', ],

@@ -1,5 +1,6 @@
 #! python 3
 # _*_ coding: utf_8  _*_
+# Help to fill in the reexam marks. use the class. 2017-2-22
 
 import openpyxl
 import os

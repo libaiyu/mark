@@ -1,12 +1,14 @@
 # _*_ coding: utf_8  _*_
 # read marks of many workbooks then write the marks togather for students which failed pass the exam.
-# need test
+# need test.  2017-2-15
+# need used in the file 1510401.xlsx.  2017-3-4
 
 import openpyxl
 import os
 import re
 import logging
 
+dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
 classReg = re.compile(r'\d{7}')
 
 # logging.disable(logging.CRITICAL)
@@ -16,8 +18,7 @@ logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname
 logging.critical('--------Start of program---------')
 
 # Read marks
-dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
-for file in os.listdir():
+for file in os.listdir( dirname):
     logging.debug(file)
     # The student's marks need to write in the cell of the excel
     # List is reasonable at here.

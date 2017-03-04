@@ -1,6 +1,6 @@
 #! python3
 # _*_ coding: utf_8  _*_
-# copy marks in many workbooks and put them togather for every student.
+# copy marks in many workbooks and put them togather for every student.  2017-2-24.
 
 import openpyxl
 import os

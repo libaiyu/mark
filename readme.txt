@@ -8,7 +8,7 @@
 1，clearExcel.py
 2, writeNumName.py
 3, addTag.py
-4, coursenote.py
+4, coursemark.py
 5, writeRecord.py
 
 当学期结束时，学生的成绩也统计完毕后。运行下面的程序

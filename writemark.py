@@ -1,6 +1,6 @@
 #! python3
 # _*_ coding: utf_8  _*_
-# copy the remark from a temp workbook, then write to the remark workbook.
+# copy the remark from a temp workbook, then write to the reexam mark workbook.  2017-2-25.
 
 import openpyxl
 import os

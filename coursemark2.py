@@ -1,4 +1,5 @@
 #! python3
+# try to use GUI to rewrite the program that can record the mark during the course.
 
 from tkinter import *
 

@@ -7,6 +7,8 @@ import os
 import re
 import logging
 
+import getdir
+
 # logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
@@ -20,7 +22,7 @@ excelReg = re.compile(r'.xlsx')
 
 wb = openpyxl.Workbook()
 sheet = wb.get_active_sheet()
-dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
+dirname = getdir.getdir()
 count = 0
 for fileName in os.listdir(dirname):
     if excelReg.search(fileName):

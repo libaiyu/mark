@@ -1,7 +1,6 @@
 #! python3
 
 import getdir
-from getfile import *
 
 def getfull( dirname, filelist):
     full_list = []
