@@ -50,8 +50,9 @@ for file in os.listdir(dirname):
         # write the number and name of the students to the new files that will note the mark for students.
         count = 0
         for file in os.listdir(dirname):
-            classReg2 = re.compile(className)
+            classReg2 = re.compile(className + '\.')
             if classReg2.search(file):
+                logging.info(classReg2.search(file))
                 if ChineseReg.search(file) == None:
                     fullname = dirname + '\\' + file
                     wb = openpyxl.load_workbook(fullname)
