@@ -7,7 +7,8 @@ select the "课程"，select "加减分的项",input"学号","分值"
 it will write the "分值"
 Record can not be written. prompt is not good enough.   2017-2-11-10:50
 Student's number must be 2 digits. When it is smaller than 10, It should be 0X.  2017-2-11-17:23
-tidy the value. add display the 总分。
+tidy the value. add display the 总分。display the rank.         2017-2-20
+debug the course regular.      2017-3-4.
 '''
 
 import openpyxl
@@ -29,7 +30,7 @@ Chinese_reg = re.compile(r'学生名单')
 # class
 class_reg = re.compile(r'\d{7}')
 # course
-course_reg = re.compile(r'-([a-z]{3,11})-')
+course_reg = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
 
 performance_tag = [
     ['旷课',],
