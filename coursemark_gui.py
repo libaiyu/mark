@@ -1,5 +1,10 @@
 #! python3
 # _*_ coding: utf_8  _*_
+'''list the ahead 8 students' mark.       2017-3-5
+try to list the courses. then you can choose the course by click.  2017-3-6
+try to arrange the partials.
+
+''' 
 
 import openpyxl
 import os
@@ -29,14 +34,18 @@ class App(Frame):
         self.course.pack()
         
     def create_entry(self):
-        
+
+        # label.
+        self.ind = Label()
+        self.ind['text'] = '必须先回车'
+        self.ind.pack()
         # Entry.
         self.entercourse = Entry()
         # here is the application variable
         self.contents = StringVar()
         # set it to some value
         self.contents.set(FILENAME)
-        self.entercourse.config( width=80)
+        self.entercourse.config( width=100)
         # tell the entry widget to watch this variable
         self.entercourse["textvariable"] = self.contents
         # when the user hits return
@@ -77,7 +86,7 @@ class App(Frame):
     def sele_course(self):
         
         global fulllist, NUM
-        # every click, num increase 1. to select the next course.
+        # every click, NUM increase 1. to select the next course.
         NUM -= 1
         self.contents.set( fulllist[NUM])
         if NUM == 0:
@@ -129,11 +138,12 @@ class App(Frame):
 
 
 def test():
-    global root, FILENAME   #  root used in QUIT Button( command=root.destroy).
+    global root, FILENAME, NUM  #  root used in QUIT Button( command=root.destroy).
+    NUM = 0
     FILENAME = "d:\_PythonWorks\excelOperate\pscj161702\模拟电子技术-performance-1523701.xlsx"
     root = Tk()
     root.title("课程平时成绩")
-    root.geometry('600x360')
+    root.geometry('800x500')
     app = App(master=root)
     app.mainloop()
 
