@@ -124,7 +124,7 @@ while finish != 'y':
             logging.critical(sheet.cell(row = row,column = itemNum).value)   # 写之后，cell的值
             print(stuNum,' 总分是：', sheet.cell(row = row,column = 4).value)
             break
-    finish = input('你要退出吗？(y/n):').lower()
+    finish = input('你要退出吗？("y" to quit.return to continue):').lower()
 marks = []
 for row in range(3,sheet.max_row + 1):
     marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))

@@ -119,7 +119,7 @@ while finish != 'y':
     for k in marks[:8]:
         print(k)
     logging.critical('---------------')
-    finish = input('你要退出吗？(y/n):').lower()
+    finish = input('你要退出吗？("y" to quit.return to continue):').lower()
     wb.save(fulllist[coursenum])
 
 print('后8名为：')
