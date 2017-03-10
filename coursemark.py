@@ -82,20 +82,20 @@ fulllist = getfull( DIRNAME, filelist)
 coursenum = int(input('\n please input a number for 课程: '))    
 coursetype = course_reg.search(filelist[coursenum]).group(1)
 print( fulllist[coursenum])
+print(coursetype)
+item = {}
+k = 0
+for val in tagdict[coursetype]:
+    print(str(k) + ' ' + str(val) + ' ')
+    item[k+6] = str(val)
+    k += 1
+itemnum = 6 + int(input('\n please input a number for select item: '))
+
 wb = openpyxl.load_workbook(fulllist[coursenum])
 sheet = wb.get_active_sheet()
 
 finish = 0
 while finish != 'y':  
-    print(coursetype)
-    item = {}
-    k = 0
-    for val in tagdict[coursetype]:
-        print(str(k) + ' ' + str(val) + ' ')
-        item[k+6] = str(val)
-        k += 1
-
-    itemnum = 6 + int(input('\n please input a number for select item: '))
     studnum = input("\n please input three last digitals of select student's number: 205 ")
     mark = input('\n please input the mark: ')
     ###
@@ -120,6 +120,7 @@ while finish != 'y':
         print(k)
     logging.critical('---------------')
     finish = input('你要退出吗？("y" to quit.return to continue):').lower()
+    
     wb.save(fulllist[coursenum])
 
 print('后8名为：')
