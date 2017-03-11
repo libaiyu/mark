@@ -91,7 +91,15 @@ for val in tagdict[coursetype]:
     k += 1
 itemnum = 6 + int(input('\n please input a number for select item: '))
 
+print( fulllist[coursenum])
 wb = openpyxl.load_workbook(fulllist[coursenum])
+try:
+    import pdb;pdb.set_trace()
+    wb = openpyxl.load_workbook(fulllist[coursenum])
+except IndexError:
+    input('Please open the workbook, save it and close it.')
+    wb = openpyxl.load_workbook(fulllist[coursenum])
+
 sheet = wb.get_active_sheet()
 
 finish = 0
@@ -121,8 +129,11 @@ while finish != 'y':
     logging.critical('---------------')
     finish = input('你要退出吗？("y" to quit.return to continue):').lower()
     
-    wb.save(fulllist[coursenum])
-
+    try:    
+        wb.save(fulllist[coursenum])
+    except PermissionError:
+        print('Please close the workbook.')
+    
 print('后8名为：')
 for k in marks[-8:]:
     print(k)
