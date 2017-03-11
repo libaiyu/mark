@@ -92,9 +92,9 @@ for val in tagdict[coursetype]:
 itemnum = 6 + int(input('\n please input a number for select item: '))
 
 print( fulllist[coursenum])
-wb = openpyxl.load_workbook(fulllist[coursenum])
+# wb = openpyxl.load_workbook(fulllist[coursenum])
 try:
-    import pdb;pdb.set_trace()
+#    import pdb;pdb.set_trace()
     wb = openpyxl.load_workbook(fulllist[coursenum])
 except IndexError:
     input('Please open the workbook, save it and close it.')
