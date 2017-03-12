@@ -20,6 +20,7 @@ import re
 import getdir
 from getfull import *
 from filesele import *
+from getdigits import *       # 2017-3-12
 
 import logging
 
@@ -86,17 +87,22 @@ for line in filelist:
     k += 1
 # File full name list.
 fulllist = getfull( DIRNAME, filelist)
-coursenum = int(input('\n please input a number for 课程: '))    
+st = 'please input a number for select course:'
+conum = getdigits( st, 0, k)  # input a digit, it is smaller than k.
+coursenum = int( conum)
 coursetype = course_reg.search(filelist[coursenum]).group(1)
-print( fulllist[coursenum])
-logging.critical(coursetype)
+logging.critical( filelist[coursenum])
+print(coursetype)
 item = {}
 k = 0
 for val in tagdict[coursetype]:
     print(str(k) + ' ' + str(val) + ' ')
     item[k+6] = str(val)
     k += 1
-itemnum = 6 + int(input('\n please input a number for select item: '))
+st = 'please input a number for select item:'
+inum = getdigits( st, 0, k)
+itnum = int( inum)
+itemnum = 6 + itnum
 
 wb = openpyxl.load_workbook(fulllist[coursenum])
 
@@ -109,9 +115,9 @@ wb = openpyxl.load_workbook(fulllist[coursenum])
 
 sheet = wb.get_active_sheet()
 
-finish = 0
-while finish != 'y':  
-    studnum = input("\n please input three last digitals of select student's number: 205 ")
+finish = '0'
+while finish.isdigit():   # when finish is digit, do loop.
+    studnum = input("\n 输入学号则继续,其他则退出: 205 ")
     for row in range(3,sheet.max_row + 1):
         logging.debug(str(sheet['b'+str(row)].value)[-3:])           #  学号在B列
         if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
@@ -132,15 +138,16 @@ while finish != 'y':
     for k in marks[:8]:
         print(k)
     logging.critical('---------------')
-    finish = input('你要退出吗？("y" to quit.Other to continue):').lower()
+    print( studnum.lower()) 
+    finish = studnum   # when studnum is not digit, then finish is not digit, means end.
 
-    while True:
-        try:    
-            wb.save(fulllist[coursenum])
-        except PermissionError:
-            input('Please close the workbook.')
-        else:
-            break
+while True:
+    try:    
+        wb.save(fulllist[coursenum])
+    except PermissionError:
+        input('Please close the workbook.')
+    else:
+        break
     
 print('后8名为：')
 for k in marks[-8:]:
