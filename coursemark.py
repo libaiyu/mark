@@ -17,10 +17,7 @@ import openpyxl
 import os
 import re
 
-import getdir
-from getfull import *
-from filesele import *
-from getdigits import *       # 2017-3-12
+from getdir import *  # 2017-3-12
 
 import logging
 
@@ -75,10 +72,10 @@ tagdict = {'performance':performance_tag,
            'practice':practice_tag}
 
 # Get the directory name.
-DIRNAME = getdir.getdir()
+DIRNAME = getdir()
 # Get the filename list.
 FILELIST = os.listdir( DIRNAME)
-# Get the filename list include coursetype.
+# Get the select list include coursetype.
 filelist = filesele( FILELIST, course_reg)
 # Prompt the number and filename to select.
 k = 0
@@ -87,9 +84,8 @@ for line in filelist:
     k += 1
 # File full name list.
 fulllist = getfull( DIRNAME, filelist)
-st = 'please input a number for select course:'
-conum = getdigits( st, 0, k)  # input a digit, it is smaller than k.
-coursenum = int( conum)
+st = 'select course. '
+coursenum = getdigits( st, 0, k)  # input a digit, it is smaller than k.
 coursetype = course_reg.search(filelist[coursenum]).group(1)
 logging.critical( filelist[coursenum])
 print(coursetype)
@@ -99,9 +95,8 @@ for val in tagdict[coursetype]:
     print(str(k) + ' ' + str(val) + ' ')
     item[k+6] = str(val)
     k += 1
-st = 'please input a number for select item:'
-inum = getdigits( st, 0, k)
-itnum = int( inum)
+st = 'select item. '
+itnum = getdigits( st, 0, k)
 itemnum = 6 + itnum
 
 wb = openpyxl.load_workbook(fulllist[coursenum])
@@ -117,7 +112,10 @@ sheet = wb.get_active_sheet()
 
 finish = '0'
 while finish.isdigit():   # when finish is digit, do loop.
-    studnum = input("\n 输入学号则继续,其他则退出: 205 ")
+    studnum = input("\n 输入学号,其他将退出: 205, 401:")
+    if not studnum.isdigit():
+        finish = studnum   # when studnum is not digit, then finish is not digit, means end.
+        break
     for row in range(3,sheet.max_row + 1):
         logging.debug(str(sheet['b'+str(row)].value)[-3:])           #  学号在B列
         if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
@@ -130,16 +128,12 @@ while finish.isdigit():   # when finish is digit, do loop.
             print(studnum,' 总分是：', sheet.cell(row = row,column = 4).value)
             break
         
-    marks = []
-    for row in range(3,sheet.max_row + 1):
-        marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
-    marks.sort(reverse=True)
-    print('前8名为：')
-    for k in marks[:8]:
-        print(k)
-    logging.critical('---------------')
-    print( studnum.lower()) 
-    finish = studnum   # when studnum is not digit, then finish is not digit, means end.
+marks = []
+for row in range(3,sheet.max_row + 1):
+    marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
+phead( marks, 8)
+logging.critical('---------------')
+prear( marks, 8)
 
 while True:
     try:    
@@ -148,11 +142,6 @@ while True:
         input('Please close the workbook.')
     else:
         break
-    
-print('后8名为：')
-for k in marks[-8:]:
-    print(k)
-
 logging.critical('-------End--------')
 
 

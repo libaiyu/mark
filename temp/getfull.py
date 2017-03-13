@@ -1,5 +1,6 @@
 #! python3
 
+import os
 import getdir
 
 def getfull( dirname, filelist):
@@ -12,7 +13,8 @@ def getfull( dirname, filelist):
 def test():
 
     DIRNAME = getdir.getdir()
-    FILELIST = getfile( DIRNAME)
+    # Get the filename list.
+    FILELIST = os.listdir( DIRNAME)
     fulllist = getfull( DIRNAME, FILELIST)
     k = 0
     for line in fulllist:

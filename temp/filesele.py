@@ -13,7 +13,7 @@ def filesele( filelist, regex):
 
 
 import re
-
+import os
 import getdir
 
 def test():
@@ -25,6 +25,7 @@ def test():
     for file in FILELIST:
         print(k, file)
         k += 1
+    print('\n')
     course_reg = re.compile(r'-([a-z]{3,11})-')
     filese = filesele( FILELIST, course_reg)
     k = 0
