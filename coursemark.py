@@ -77,6 +77,8 @@ DIRNAME = getdir()
 FILELIST = os.listdir( DIRNAME)
 # Get the select list include coursetype.
 filelist = filesele( FILELIST, course_reg)
+# sort the filelist. so the index of the file is nochange.
+filelist.sort()
 # Prompt the number and filename to select.
 k = 0
 for line in filelist:
@@ -84,64 +86,67 @@ for line in filelist:
     k += 1
 # File full name list.
 fulllist = getfull( DIRNAME, filelist)
-st = 'select course. '
-coursenum = getdigits( st, 0, k)  # input a digit, it is smaller than k.
-coursetype = course_reg.search(filelist[coursenum]).group(1)
-logging.critical( filelist[coursenum])
-print(coursetype)
-item = {}
-k = 0
-for val in tagdict[coursetype]:
-    print(str(k) + ' ' + str(val) + ' ')
-    item[k+6] = str(val)
-    k += 1
-st = 'select item. '
-itnum = getdigits( st, 0, k)
-itemnum = 6 + itnum
-
-wb = openpyxl.load_workbook(fulllist[coursenum])
-
-##try:
-###    import pdb;pdb.set_trace()
-##    wb = openpyxl.load_workbook(fulllist[coursenum])
-##except IndexError:
-##    input('Please open the workbook, save it and close it.')
-##    wb = openpyxl.load_workbook(fulllist[coursenum])
-
-sheet = wb.get_active_sheet()
-
-finish = '0'
-while finish.isdigit():   # when finish is digit, do loop.
-    studnum = input("\n 输入学号,其他将退出: 205, 401:")
-    if not studnum.isdigit():
-        finish = studnum   # when studnum is not digit, then finish is not digit, means end.
-        break
-    for row in range(3,sheet.max_row + 1):
-        logging.debug(str(sheet['b'+str(row)].value)[-3:])           #  学号在B列
-        if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
-            # Write
-            logging.critical(sheet.cell(row = row,column = itemnum).value)   # 写之前，cell的值
-            mark = input('\n please input the mark: ')
-            sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加减的分数
-            sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
-            logging.critical(sheet.cell(row = row,column = itemnum).value)   # 写之后，cell的值
-            print(studnum,' 总分是：', sheet.cell(row = row,column = 4).value)
-            break
-        
-marks = []
-for row in range(3,sheet.max_row + 1):
-    marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
-phead( marks, 8)
-logging.critical('---------------')
-prear( marks, 8)
-
-while True:
-    try:    
-        wb.save(fulllist[coursenum])
-    except PermissionError:
-        input('Please close the workbook.')
+st = 'select course或q:'
+cour_num = getdigits( st, 0, k)  # input a digit, it is smaller than k.
+if cour_num is 'q':
+    pass
+else:
+    coursenum = int( cour_num)
+    logging.critical( filelist[coursenum])
+    pfrank( fulllist[coursenum], 8)    # print rank.
+    coursetype = course_reg.search(filelist[coursenum]).group(1)
+    print(coursetype)
+    item = {}
+    k = 0
+    for val in tagdict[coursetype]:
+        print(str(k) + ' ' + str(val) + ' ')
+        item[k+6] = str(val)
+        k += 1
+    st = 'select item或q:'
+    itnum = getdigits( st, 0, k)
+    if itnum is 'q':
+        pass
     else:
-        break
+        itemnum = 6 + int( itnum)
+
+        wb = openpyxl.load_workbook(fulllist[coursenum])
+
+        ##try:
+        ###    import pdb;pdb.set_trace()
+        ##    wb = openpyxl.load_workbook(fulllist[coursenum])
+        ##except IndexError:
+        ##    input('Please open the workbook, save it and close it.')
+        ##    wb = openpyxl.load_workbook(fulllist[coursenum])
+
+        sheet = wb.get_active_sheet()
+
+        finish = itnum
+        while finish.isdigit():   # when finish is digit, do loop.
+            st = "\n 输入学号或q: 205, 401:"
+            studnum = getdigits( st, 100, 900)
+            if not studnum.isdigit():
+                finish = studnum   # when studnum is not digit, then finish is not digit, means end.
+                break
+            for row in range(3,sheet.max_row + 1):
+                logging.debug(str(sheet['b'+str(row)].value)[-3:])           #  学号在B列
+                if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
+                    # Write
+                    logging.critical(sheet.cell(row = row,column = itemnum).value)   # 写之前，cell的值
+                    mark = input('\n please input the mark: ')
+                    sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加减的分数
+                    sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
+                    logging.critical(sheet.cell(row = row,column = itemnum).value)   # 写之后，cell的值
+                    print(studnum,' 总分是：', sheet.cell(row = row,column = 4).value)
+                    break
+        while True:
+            try:    
+                wb.save(fulllist[coursenum])
+            except PermissionError:
+                input('Please close the workbook.')
+            else:
+                break
+        pfrank( fulllist[coursenum], 8)    # print rank.
+
 logging.critical('-------End--------')
 
 

@@ -39,39 +39,55 @@ def getfull( dirname, filelist):
     return full_list
 
 def getdigits( s, min_, max_):
-    '''Make the input is the digit. s is prompt.
+    '''Make the input is the digit or 'q'. s is prompt.
     '''
     
     while True:
-        # print( '\n'+s+'between: '+str( min_)+', '+str( max_))
         inum = input('\n'+s+'between: '+str( min_)+', '+str( max_)+':')
         while not inum.isdigit():
-            inum = input('\n 输入的必须是数字！')
+            if inum == 'q':
+                return inum
+            else:
+                inum = input('\n 输入的必须是数字或q！')
         itnum = int( inum)
         
         if itnum in range( min_, max_):
-            return itnum
+            return inum
         else:
             print('\n 注意输入数字的范围：')
             pass
 
-def phead( marks, num):
+def prank( marks, num):
     '''print the students' mark according to given number.
     '''
 
     marks.sort(reverse=True)
-    print('前8名为：')
-    for k in marks[:num]:
+    print('前'+str(num)+'名为：')
+    for k in marks[ :num]:
+        print(k)
+    print('后'+str(num)+'名为：')
+    for k in marks[ -num: ]:
         print(k)
 
-def prear( marks, num):
+def pfrank( file, num):
     '''print the students' mark according to given number.
     '''
+    import openpyxl
+    wb = openpyxl.load_workbook( file)
+    sheet = wb.get_active_sheet()
+    marks = []
+    for row in range(3,sheet.max_row + 1):
+        marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
+    while True:
+        try:    
+            wb.save( file)
+        except PermissionError:
+            input('Please close the workbook.')
+        else:
+            break
+    prank( marks, num)
 
-    marks.sort()
-    print('后8名为：')
-    for k in marks[:num]:
-        print(k)
+
 
 
 def main():
