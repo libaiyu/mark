@@ -77,7 +77,7 @@ def pfrank( file, num):
     sheet = wb.get_active_sheet()
     marks = []
     for row in range(3,sheet.max_row + 1):
-        marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
+        marks.append( ( sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
     while True:
         try:    
             wb.save( file)
@@ -87,7 +87,28 @@ def pfrank( file, num):
             break
     prank( marks, num)
 
+def item_mark( file, st, num=3):
+    '''print students' number and name whose item is zero.
+    '''
+    import openpyxl
 
+    wb = openpyxl.load_workbook( file)
+    sheet = wb.get_active_sheet()
+
+    for colu in range( 1, sheet.max_column+1):
+        # print( st)
+        if sheet.cell(  row=2, column=colu).value == st:
+            col = colu
+    print( sheet.cell( row=2, column=col).value)
+    print('分数为0的同学有：')
+    marks = []
+    for row in range( 3, sheet.max_row + 1):
+        el = ( sheet.cell(row = row,column = col).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value)
+        marks.append( el)
+        if not sheet.cell( row=row, column=col).value:
+            print( el)
+    wb.save( file)
+    prank( marks, num)
 
 
 def main():
@@ -117,6 +138,7 @@ def main():
         k += 1
     st = 'please input a number '
     getdigits( st, -100, 300)
+    
 
 if __name__ == '__main__':
     main()

@@ -93,8 +93,13 @@ if cour_num is 'q':
 else:
     coursenum = int( cour_num)
     logging.critical( filelist[coursenum])
-    pfrank( fulllist[coursenum], 8)    # print rank.
+    pfrank( fulllist[coursenum], 3)    # print rank.
     coursetype = course_reg.search(filelist[coursenum]).group(1)
+    need_check = tagdict[coursetype]
+    # need_check = ['提出问题', '课堂作业', '作业1']
+    need_check = [ ['作业1',],]
+    for each in need_check:
+        item_mark( fulllist[coursenum], each[0], 3)  # 分数为0的同学.
     print(coursetype)
     item = {}
     k = 0
@@ -102,6 +107,7 @@ else:
         print(str(k) + ' ' + str(val) + ' ')
         item[k+6] = str(val)
         k += 1
+
     st = 'select item或q:'
     itnum = getdigits( st, 0, k)
     if itnum is 'q':
