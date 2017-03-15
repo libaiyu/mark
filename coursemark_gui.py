@@ -3,7 +3,7 @@
 '''list the ahead 8 students' mark.       2017-3-5
 try to list the courses. then you can choose the course by click.  2017-3-6
 try to arrange the partials.    2017-3-7
-try to add a Listbox.    2017-3-15
+try to add a Listbox.  it can work. but not strong. minus can not work. 2017-3-15
 
 ''' 
 
@@ -14,6 +14,47 @@ from tkinter import *
 
 from getdir import *
 
+# course
+course_reg = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
+
+performance_tag = [
+    ['旷课',],
+    ['迟到',],
+    ['早退',],
+    ['提出问题',],
+    ['回答问题',],
+    ['课堂作业',],
+    ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],
+    ]
+lab_tag = [
+    ['旷课',],
+    ['迟到',],
+    ['早退',],
+    ['操作1',],['操作2',],['操作3',],['操作4',],['操作5',],['操作6',],['操作7',],['操作8',],
+    ['数据1',],['数据2',],['数据3',],['数据4',],['数据5',],['数据6',],['数据7',],['数据8',],   
+    ['报告1',],['报告2',],['报告3',],['报告4',],
+    ]
+design_tag = [
+    ['旷课',],
+    ['迟到',],
+    ['早退',],
+    ['设计1',],['设计2',],['设计3',],['设计4',],
+    ['数据1',],['数据2',],['数据3',],['数据4',],  
+    ['报告1',],['报告2',],
+    ]
+practice_tag = [
+    ['旷课',],
+    ['迟到',],
+    ['早退',],
+    ['操作1',],['操作2',],['操作3',],['操作4',],
+    ['数据1',],['数据2',],['数据3',],['数据4',],   
+    ['报告1',],['报告2',],    
+    ]
+
+tagdict = {'performance':performance_tag,
+           'lab':lab_tag,
+           'design':design_tag,
+           'practice':practice_tag}
 
 class App(Frame):
     '''GUI application that manage the course.
@@ -32,12 +73,12 @@ class App(Frame):
         # Create"列出课程" button .
         Button( self,
                 text = "列出课程",
-                command=self.listfileB
+                command=self.listfile
                 ).grid( column=0, row=0, sticky=(W))
 
         # Create listbox.
         self.course =  Listbox(self,
-                               width=80
+                               width=85, height = 6
                                )
         self.course.grid( column=0, row=1, sticky=(W))
 
@@ -45,40 +86,51 @@ class App(Frame):
         Button( self,
                 text = "选择课程",
                 command=self.sele_course
-                ).grid( column=0, row=4, sticky=(W))
+                ).grid( column=0, row=2, sticky=(W))
         
         # label.
         Label( self,
                text = '所选课程'
-               ).grid(  column=0, row=5, sticky=(W))
+               ).grid(  column=0, row=3, sticky=(W))
 
         # Entry.
         self.contents = StringVar()
         # set it to some value
         self.contents.set('test.')
         self.course_ent = Entry( self,
-                                 width=90,
+                                 width=85,
                                  textvariable = self.contents
-                                 ).grid( column=0, row=6, sticky=(W))
+                                 )
+        self.course_ent.grid( column=0, row=4, sticky=(W))
+        # tell the entry widget to watch this variable
+        self.course_ent["textvariable"] = self.contents
+        # when the user hits return
+        self.course_ent.bind('<Key-Return>', self.markin)
            
         # "前8名:" button .
         Button(self,
                text = "前8名:",
                command = self.ahead
-               ).grid( column=0, row=7, sticky=(W))
+               ).grid( column=0, row=5, sticky=(W))
 
         # text.
         self.ranktext = Text(self,
                              height=10, width=30, wrap='word'
                              )
-        self.ranktext.grid( column=0, row=8, sticky=(W))
+        self.ranktext.grid( column=0, row=6, sticky=(W))
+
+        # "加减分项目:" button .
+        Button(self,
+               text = "加减分项目:",
+               command = self.list_item
+               ).grid( column=0, row=7, sticky=(W))
 
         # "退出"button.
         Button(self,
                text="退出",
                fg="red",
                command=root.destroy
-               ).grid(  column=0, row=9, sticky=(W))
+               ).grid(  column=0, row=11, sticky=(W))
 
     def sele_course(self):
         
@@ -90,7 +142,7 @@ class App(Frame):
             NUM = len( fulllist)
         pass
 
-    def listfileB(self):
+    def listfile(self):
         
         global fulllist, NUM 
         # Get the directory name.
@@ -98,35 +150,61 @@ class App(Frame):
         # Get the filename list.
         FILELIST = os.listdir( DIRNAME)
         # Get the filename list include coursetype.
-        course_reg = re.compile(r'-([a-z]{3,11})-')
         filelist = filesele( FILELIST, course_reg)
+        # sort the filelist. so the index of the file is nochange.
+        filelist.sort()       
         # File full name list.
         fulllist = getfull( DIRNAME, filelist)
         NUM = len( fulllist)
-        self.course.delete(0, END)
+        self.course.delete( 0, END)
         for coursen in fulllist:
-            self.course.insert(END,  coursen)
+            self.course.insert( END, coursen)
 
-    def listfileE(self, event):
-        
-        global fulllist, NUM 
-        # Get the directory name.
-        DIRNAME = getdir()
-        # Get the filename list.
-        FILELIST = os.listdir( DIRNAME)
-        # Get the filename list include coursetype.
-        course_reg = re.compile(r'-([a-z]{3,11})-')
-        filelist = filesele( FILELIST, course_reg)
-        # File full name list.
-        fulllist = getfull( DIRNAME, filelist)
-        NUM = len( fulllist)
-        self.ranktext.delete(0.0, END)
-        self.course.delete(0, END)
-        for coursen in fulllist:
-#            self.ranktext.insert(END, coursen + '\n\n')
-            self.course.insert(END,  coursen)
+    def list_item(self):
+        # list the item according to the coursetpye.
+        self.course.delete( 0, END) # self.ranktext.delete(0.0, END)
+        coursetype = course_reg.search( fulllist[NUM]).group(1)
+        k = 0
+        for val in tagdict[coursetype]:
+            self.course.insert( END, str(k)+','+str(val)+'\n')
+            k += 1
+        self.contents.set('请选择项目代号，然后输入学号及分数')
         pass
 
+    def markin( self, event):    #    event.??
+        # modify the mark.
+        
+        global fulllist, NUM
+
+        st = self.course_ent.get()
+        print( st)
+        if st.isdigit():
+            itemnum = 6 + int( st[:2])
+
+            wb = openpyxl.load_workbook(fulllist[NUM])
+            sheet = wb.get_active_sheet()
+
+            studnum = st[2:5]
+            for row in range(3,sheet.max_row + 1):
+                if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
+                    # Write
+                    mark = st[5:]
+                    dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
+                    self.ranktext.insert( END, dp+' ')
+                    sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加减的分数
+                    dp = str( sheet.cell( row = row,column = itemnum).value)
+                    self.ranktext.insert( END, dp+' ')
+                    sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
+                    break
+            while True:
+                try:    
+                    wb.save(fulllist[NUM])
+                except PermissionError:
+                    input('Please close the workbook.')
+                else:
+                    break
+            pass
+    
     def ahead(self):
         
         global NUM, fulllist
@@ -151,139 +229,13 @@ class App(Frame):
             NUM = 3
         pass
 
-def prepare():
-    
-##    import openpyxl
-##    import os
-##    import re
-##
-##    # from getdir import *  # 2017-3-12
-
-
-    # Chinese words '学生名单' in filename
-    Chinese_reg = re.compile(r'学生名单')
-    # class
-    class_reg = re.compile(r'\d{7}')
-    # course
-    course_reg = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
-
-    performance_tag = [
-        ['旷课',],
-        ['迟到',],
-        ['早退',],
-        ['提出问题',],
-        ['回答问题',],
-        ['课堂作业',],
-        ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],
-        ]
-    lab_tag = [
-        ['旷课',],
-        ['迟到',],
-        ['早退',],
-        ['操作1',],['操作2',],['操作3',],['操作4',],['操作5',],['操作6',],['操作7',],['操作8',],
-        ['数据1',],['数据2',],['数据3',],['数据4',],['数据5',],['数据6',],['数据7',],['数据8',],   
-        ['报告1',],['报告2',],['报告3',],['报告4',],
-        ]
-    design_tag = [
-        ['旷课',],
-        ['迟到',],
-        ['早退',],
-        ['设计1',],['设计2',],['设计3',],['设计4',],
-        ['数据1',],['数据2',],['数据3',],['数据4',],  
-        ['报告1',],['报告2',],
-        ]
-    practice_tag = [
-        ['旷课',],
-        ['迟到',],
-        ['早退',],
-        ['操作1',],['操作2',],['操作3',],['操作4',],
-        ['数据1',],['数据2',],['数据3',],['数据4',],   
-        ['报告1',],['报告2',],    
-        ]
-
-    tagdict = {'performance':performance_tag,
-               'lab':lab_tag,
-               'design':design_tag,
-               'practice':practice_tag}
-
-    # Get the directory name.
-    DIRNAME = getdir()
-    # Get the filename list.
-    FILELIST = os.listdir( DIRNAME)
-    # Get the select list include coursetype.
-    filelist = filesele( FILELIST, course_reg)
-    # sort the filelist. so the index of the file is nochange.
-    filelist.sort()
-    # Prompt the number and filename to select.
-    k = 0
-    for line in filelist:
-        print(k, line)
-        k += 1
-    # File full name list.
-    fulllist = getfull( DIRNAME, filelist)
-    st = 'select course或q:'
-    cour_num = getdigits( st, 0, k)  # input a digit, it is smaller than k.
-    if cour_num is 'q':
-        pass
-    else:
-        coursenum = int( cour_num)
-        pfrank( fulllist[coursenum], 3)    # print rank.
-        coursetype = course_reg.search(filelist[coursenum]).group(1)
-        need_check = tagdict[coursetype]
-        # need_check = ['提出问题', '课堂作业', '作业1']
-        need_check = [ ['作业1',],]
-        for each in need_check:
-            item_mark( fulllist[coursenum], each[0], 3)  # 分数为0的同学.
-        print(coursetype)
-        item = {}
-        k = 0
-        for val in tagdict[coursetype]:
-            print(str(k) + ' ' + str(val) + ' ')
-            item[k+6] = str(val)
-            k += 1
-
-        st = 'select item或q:'
-        itnum = getdigits( st, 0, k)
-        if itnum is 'q':
-            pass
-        else:
-            itemnum = 6 + int( itnum)
-
-            wb = openpyxl.load_workbook(fulllist[coursenum])
-            sheet = wb.get_active_sheet()
-
-            finish = itnum
-            while finish.isdigit():   # when finish is digit, do loop.
-                st = "\n 输入学号或q: 205, 401:"
-                studnum = getdigits( st, 100, 900)
-                if not studnum.isdigit():
-                    finish = studnum   # when studnum is not digit, then finish is not digit, means end.
-                    break
-                for row in range(3,sheet.max_row + 1):
-                    if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
-                        # Write
-                        mark = input('\n please input the mark: ')
-                        sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加减的分数
-                        sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
-                        print(studnum,' 总分是：', sheet.cell(row = row,column = 4).value)
-                        break
-            while True:
-                try:    
-                    wb.save(fulllist[coursenum])
-                except PermissionError:
-                    input('Please close the workbook.')
-                else:
-                    break
-            pfrank( fulllist[coursenum], 8)    # print rank.
-
 def test():
     global root, FILENAME, NUM  #  root used in QUIT Button( command=root.destroy).
     NUM = 0
     FILENAME = ''
-#    prepare()
     root = Tk()
     root.title("课程平时成绩")
-    root.geometry('500x400')
+    root.geometry('580x380')
     app = App(master=root)
     app.mainloop()
 
@@ -291,157 +243,5 @@ if __name__ == '__main__':
     
     test()
     print('End')
-
-
-##
-##================ RESTART: D:\_PythonWorks\mark\coursemark2.py ================
-##hi. contents of entry is now ----> hi.
-##Exception in Tkinter callback
-##Traceback (most recent call last):
-##  File "C:\Python34\lib\tkinter\__init__.py", line 1538, in __call__
-##    return self.func(*args)
-##TypeError: turn_red() missing 1 required positional argument: 'event'
-##End
-
-##button .b -text "Hello, World!" -command exit
-##pack .b
-##button .b1 -text Hello -underline 0
-##button .b2 -text World -underline 0
-##bind . <Key-h> {.b1 flash; .b1 invoke}
-##bind . <Key-w> {.b2 flash; .b2 invoke}
-##pack .b1 .b2
-
-##from tkinter import *
-##class App(Frame):
-##    def __init__(self, master=None):
-##        Frame.__init__(self, master)
-##        self.grid()
-##
-##
-### create the application
-##myapp = App()
-##
-###
-### here are method calls to the window manager class
-###
-##myapp.master.title("My Do-Nothing Application")
-##myapp.master.maxsize(1000, 400)
-##
-### start the program
-##myapp.mainloop()
-
-
-
-##
-##import tkinter
-##from tkinter.constants import *
-##tk = tkinter.Tk()
-##frame = tkinter.Frame(tk, relief=RIDGE, borderwidth=2)
-##frame.grid(fill=BOTH,expand=1)
-##label = tkinter.Label(frame, text="Hello, World")
-##label.grid(fill=X, expand=1)
-##button = tkinter.Button(frame,text="Exit",command=tk.destroy)
-##button.grid(side=BOTTOM)
-##tk.mainloop()
-##
-
-##from tkinter import *
-##
-##class Application(Frame):
-##    def __init__(self, master=None):
-##        Frame.__init__(self, master)
-##        self.grid()
-##        self.createWidgets()
-##
-##    def createWidgets(self):
-##        self.hi_there = Button(self)
-##        self.hi_there["text"] = "Hello World\n(click me)"
-##        self.hi_there["command"] = self.say_hi
-##        self.hi_there.grid(side="top")
-##
-##        self.course = OptionMenu(self, text="课程", variable='', value='', fg="red",)
-##        self.course.grid()
-##        
-##        self.QUIT = Button(self, text="QUIT", fg="red",
-##                                            command=root.destroy)
-##        self.QUIT.grid(side="bottom")
-##
-##    def say_hi(self):
-##        print("hi there, everyone!")
-##
-##
-##def test():
-##    global root       #  root used in QUIT Button( command=root.destroy).
-##    root = Tk()
-##    app = Application(master=root)
-####    widgs = app.createWidgets()
-##    app.mainloop()
-##
-##if __name__ == '__main__':
-##    test()
-##    print('End')
-
-##               
-##    def createntry(self):
-##               
-##         # Entry.
-##        self.entercourse = Entry()
-##        # here is the application variable
-##        self.contents = StringVar()
-##        # set it to some value
-##        self.contents.set(FILENAME)
-##        self.entercourse.config( width=90)
-##        # tell the entry widget to watch this variable
-##        self.entercourse["textvariable"] = self.contents
-##        # when the user hits return
-##        self.entercourse.bind('<Key-Return>', self.listfileE)        
-##        self.entercourse.grid( column=0, row=1, sticky=(W))
-##
-### try to use GUI to rewrite the program that can record the mark during the course.
-##
-##from tkinter import *
-##
-##class Application(Frame):
-##    """ A GUI application with three buttons. """
-##    
-##
-##    def __init__( self, master):
-##        'Initialize the Frame.'
-##
-##        super( Application, self).__init__(master)
-##        self.grid()
-##        self.create_widgets()
-##
-##    def create_widgets(self):
-##        'Create three buttons that do nothing.'
-##        
-##        # Create first button.
-##        self.bttn1 = Listbox( self, text="I do nothing!")
-##        self.bttn1.grid()
-##
-##        # Create second button.
-##        self.bttn2 = Button( self)
-##        self.bttn2.grid()
-##        self.bttn2.configure(text="lazzy button")
-##
-##        # Create third button.
-##        self.bttn3 = Button( self)
-##        self.bttn3.grid()
-##        self.bttn3['text'] = 'same here'
-##
-##def test():
-##    # test for the function.
-##    root = Tk()
-##    root.title('平时成绩记录')
-##    root.geometry('600x300')
-##
-##    app = Application(root)
-##    root.mainloop()
-##
-##if __name__ == '__main__':
-##    test()
-##    print('End')
-##
-##    
 
 

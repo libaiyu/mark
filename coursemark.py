@@ -101,11 +101,9 @@ else:
     for each in need_check:
         item_mark( fulllist[coursenum], each[0], 3)  # 分数为0的同学.
     print(coursetype)
-    item = {}
     k = 0
     for val in tagdict[coursetype]:
         print(str(k) + ' ' + str(val) + ' ')
-        item[k+6] = str(val)
         k += 1
 
     st = 'select item或q:'
