@@ -16,82 +16,69 @@ from getdir import *
 
 
 class App(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.course_button1()
-        self.course_button2()
-        self.create_listbox()
-        self.create_entry()
-        self.rank_button()
-        self.create_text()
-        self.quit_button()
+    '''GUI application that manage the course.
+    '''
+
+    def __init__( self, master):
+        'Initialize the Frame.'
+
+        super( App, self).__init__(master)
+        self.grid()
+        self.create_widgets()
+
+    def create_widgets(self):
+        'Create all kinds of widgets.'
         
-    def course_button1(self):
+        # Create"列出课程" button .
+        Button( self,
+                text = "列出课程",
+                command=self.listfileB
+                ).grid( column=0, row=0, sticky=(W))
 
-        # "列出课程" button .
-        self.courseL = Button(self)
-        self.courseL["text"] = "列出课程"
-        self.courseL.config( command=self.listfileB)
-        self.courseL.grid( column=0, row=0, sticky=(W))
+        # Create listbox.
+        self.course =  Listbox(self,
+                               width=80
+                               )
+        self.course.grid( column=0, row=1, sticky=(W))
 
-    def course_button2(self):
-
-        # "选择课程" button .
-        self.courseS = Button(self)
-        self.courseS["text"] = "选择课程"
-        self.courseS.config( command=self.sele_course)
-        self.courseS.grid( column=1, row=0, sticky=(W))
+        # Create"选择课程" button .
+        Button( self,
+                text = "选择课程",
+                command=self.sele_course
+                ).grid( column=0, row=4, sticky=(W))
         
-    def create_entry(self):
-
         # label.
-        self.ind = Label()
-        self.ind['text'] = '先列出课程'
-        self.ind.grid(  column=0, row=0, sticky=(W))
+        Label( self,
+               text = '所选课程'
+               ).grid(  column=0, row=5, sticky=(W))
+
         # Entry.
-        self.entercourse = Entry()
-        # here is the application variable
         self.contents = StringVar()
         # set it to some value
-        self.contents.set(FILENAME)
-        self.entercourse.config( width=90)
-        # tell the entry widget to watch this variable
-        self.entercourse["textvariable"] = self.contents
-        # when the user hits return
-        self.entercourse.bind('<Key-Return>', self.listfileE)        
-        self.entercourse.grid( column=0, row=1, sticky=(W))
-        
-    def rank_button(self):
-        
+        self.contents.set('test.')
+        self.course_ent = Entry( self,
+                                 width=90,
+                                 textvariable = self.contents
+                                 ).grid( column=0, row=6, sticky=(W))
+           
         # "前8名:" button .
-        self.rank = Button(self)
-        self.rank["text"] = "前8名:"
-        self.rank.config( command=self.ahead)
-        self.rank.grid( column=2, row=0, sticky=(W))
-
-        
-    def create_text(self):
+        Button(self,
+               text = "前8名:",
+               command = self.ahead
+               ).grid( column=0, row=7, sticky=(W))
 
         # text.
-        self.ranktext = Text()
-        self.ranktext.config( height=10, width=30, wrap='word')
-        self.ranktext.grid( column=0, row=6, sticky=(W))
-        
-    def create_listbox(self):
-        
-        # try to use listbox.
-        self.course = Listbox(self)
-        self.course.config( width=80)
-        self.course.grid( column=2, row=4, sticky=(W))
-        pass
+        self.ranktext = Text(self,
+                             height=10, width=30, wrap='word'
+                             )
+        self.ranktext.grid( column=0, row=8, sticky=(W))
 
-    def quit_button(self):
-        
         # "退出"button.
-        self.QUIT = Button(self, text="退出", fg="red", command=root.destroy)
-        self.QUIT.grid(  column=1, row=8, sticky=(W))
-        self.grid( column=0, row=9, sticky=(W))
-
+        Button(self,
+               text="退出",
+               fg="red",
+               command=root.destroy
+               ).grid(  column=0, row=9, sticky=(W))
 
     def sele_course(self):
         
@@ -142,7 +129,6 @@ class App(Frame):
 
     def ahead(self):
         
-        self.rank["activeforeground"] = "red"
         global NUM, fulllist
         # Read the marks.
         if NUM == 3:
@@ -297,7 +283,7 @@ def test():
 #    prepare()
     root = Tk()
     root.title("课程平时成绩")
-    root.geometry('600x380')
+    root.geometry('500x400')
     app = App(master=root)
     app.mainloop()
 
@@ -395,7 +381,21 @@ if __name__ == '__main__':
 ##    test()
 ##    print('End')
 
- 
+##               
+##    def createntry(self):
+##               
+##         # Entry.
+##        self.entercourse = Entry()
+##        # here is the application variable
+##        self.contents = StringVar()
+##        # set it to some value
+##        self.contents.set(FILENAME)
+##        self.entercourse.config( width=90)
+##        # tell the entry widget to watch this variable
+##        self.entercourse["textvariable"] = self.contents
+##        # when the user hits return
+##        self.entercourse.bind('<Key-Return>', self.listfileE)        
+##        self.entercourse.grid( column=0, row=1, sticky=(W))
 ##
 ### try to use GUI to rewrite the program that can record the mark during the course.
 ##
