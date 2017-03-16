@@ -1,10 +1,11 @@
 #! python3
 # _*_ coding: utf_8  _*_
-'''list the ahead 8 students' mark.       2017-3-5
-try to list the courses. then you can choose the course by click.  2017-3-6
-try to arrange the partials.    2017-3-7
+'''list the ahead 8 students' mark.        2017-3-5
+try to list the courses. then we can choose the course by click.  2017-3-6
+try to arrange the widgets.                2017-3-7
 try to add a Listbox.  it can work. but not strong. minus can not work. 2017-3-15
-
+Minus mark can be written now.             2017-3-16  morning
+It can be run arbitrary.                   2017-3-16  22:10
 ''' 
 
 import openpyxl
@@ -135,7 +136,7 @@ class App(Frame):
     def sele_course(self):
         
         global fulllist, NUM
-        # every click, NUM increase 1. to select the next course.
+        # every click, NUM decrease 1. to select the next course.
         NUM -= 1
         self.contents.set( fulllist[NUM])
         if NUM == 0:
@@ -144,61 +145,60 @@ class App(Frame):
 
     def listfile(self):
         
-        global fulllist, NUM 
-        # Get the directory name.
-        DIRNAME = getdir()
-        # Get the filename list.
-        FILELIST = os.listdir( DIRNAME)
-        # Get the filename list include coursetype.
-        filelist = filesele( FILELIST, course_reg)
-        # sort the filelist. so the index of the file is nochange.
-        filelist.sort()       
-        # File full name list.
-        fulllist = getfull( DIRNAME, filelist)
-        NUM = len( fulllist)
+        global fulllist
         self.course.delete( 0, END)
         for coursen in fulllist:
             self.course.insert( END, coursen)
 
     def list_item(self):
+        
+        global fulllist, NUM
+        
         # list the item according to the coursetpye.
         self.course.delete( 0, END) # self.ranktext.delete(0.0, END)
-        coursetype = course_reg.search( fulllist[NUM]).group(1)
+        coursetype = course_reg.search( fulllist[NUM % 3]).group(1)
         k = 0
         for val in tagdict[coursetype]:
             self.course.insert( END, str(k)+','+str(val)+'\n')
             k += 1
-        self.contents.set('请选择项目代号，然后输入学号及分数')
+        self.contents.set('请输入项目代号2位学号3位及分数-2分记为12. 0511102.')
         pass
 
-    def markin( self, event):    #    event.??
+    def markin( self, event):    #    event.??    ok.   17-3-15.
         # modify the mark.
         
         global fulllist, NUM
-
+        
         st = self.course_ent.get()
         print( st)
         if st.isdigit():
             itemnum = 6 + int( st[:2])
 
-            wb = openpyxl.load_workbook(fulllist[NUM])
+            wb = openpyxl.load_workbook(fulllist[NUM % 3])
             sheet = wb.get_active_sheet()
 
             studnum = st[2:5]
             for row in range(3,sheet.max_row + 1):
-                if str(sheet['b'+str(row)].value)[-3:] == studnum:                   #  学号在B列
+                if str(sheet['b'+str(row)].value)[-3:] == studnum:           #  学号在B列
                     # Write
-                    mark = st[5:]
                     dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
-                    self.ranktext.insert( END, dp+' ')
-                    sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加减的分数
+                    dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
+                    self.ranktext.insert( END, dp+' ')                       # 显示加之前的分数
+                    mark = st[6:]
+                    if st[5]=='0':
+                        sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加的分数
+                        sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
+                    elif st[5]=='1':
+                        sheet.cell(row = row,column = itemnum).value -= int(mark)    # 减去要减的分数
+                        sheet.cell(row = row,column = 4).value -= int(mark)          # 总分也减去该分数
                     dp = str( sheet.cell( row = row,column = itemnum).value)
-                    self.ranktext.insert( END, dp+' ')
-                    sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
+                    dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
+                    self.ranktext.insert( END, dp+' ')                     # 显示加之后的分数
                     break
+                
             while True:
                 try:    
-                    wb.save(fulllist[NUM])
+                    wb.save(fulllist[NUM % 3])
                 except PermissionError:
                     input('Please close the workbook.')
                 else:
@@ -207,16 +207,14 @@ class App(Frame):
     
     def ahead(self):
         
-        global NUM, fulllist
+        global fulllist, NUM
         # Read the marks.
-        if NUM == 3:
-            NUM = 0
-        wb = openpyxl.load_workbook( fulllist[NUM])
+        wb = openpyxl.load_workbook( fulllist[NUM % 3])
         sheet = wb.get_active_sheet()
         marks = []
         for row in range(3,sheet.max_row + 1):
             marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
-        wb.save( fulllist[NUM])
+        wb.save( fulllist[NUM % 3])
         
         self.ranktext.delete(1.0, END)
         self.ranktext.insert(END, '前8名为：\n')
@@ -225,23 +223,34 @@ class App(Frame):
         for k in marks[:8]:
             # insert the ahead marks to text.
             self.ranktext.insert(END, str(k)+'\n')
-        if NUM == 0:
-            NUM = 3
         pass
 
-def test():
-    global root, FILENAME, NUM  #  root used in QUIT Button( command=root.destroy).
-    NUM = 0
-    FILENAME = ''
-    root = Tk()
-    root.title("课程平时成绩")
-    root.geometry('580x380')
-    app = App(master=root)
-    app.mainloop()
+def getfile():
 
-if __name__ == '__main__':
+    global fulllist, NUM
+    # Get the directory name.
+    DIRNAME = getdir()
+    # Get the filename list.
+    FILELIST = os.listdir( DIRNAME)
+    # Get the filename list include coursetype.
+    filelist = filesele( FILELIST, course_reg)
+    # sort the filelist. so the index of the file is nochange.
+    filelist.sort()       
+    # File full name list.
+    fulllist = getfull( DIRNAME, filelist)
+    NUM = len( fulllist)
+
+##test():
+# global root  # , NUM  #  root used in QUIT Button( command=root.destroy).
+# NUM = 0
+getfile()
+root = Tk()
+root.title("课程平时成绩")
+root.geometry('580x380')
+app = App(master=root)
+app.mainloop()
+print('End')
+
+##if __name__ == __main__:
+##    test()
     
-    test()
-    print('End')
-
-
