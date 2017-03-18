@@ -170,11 +170,11 @@ class App(Frame):
 
     def list_item(self):
         
-        global fulllist, NUM
+        global fulllist, NUM, NUM_BAK
         
         # list the item according to the coursetpye.
         self.course.delete( 0, END) # self.ranktext.delete(0.0, END)
-        coursetype = course_reg.search( fulllist[NUM % 3]).group(1)
+        coursetype = course_reg.search( fulllist[NUM % NUM_BAK]).group(1)
         k = 0
         for val in tagdict[coursetype]:
             self.course.insert( END, str(k)+','+str(val)+'\n')
@@ -185,14 +185,14 @@ class App(Frame):
     def markin( self, event):    #    event.??    ok.   17-3-15.
         # modify the mark.
         
-        global fulllist, NUM
+        global fulllist, NUM, NUM_BAK
         
         st = self.course_ent.get()
         print( st)
         if st.isdigit():
             itemnum = 6 + int( st[:2])
 
-            wb = openpyxl.load_workbook(fulllist[NUM % 3])
+            wb = openpyxl.load_workbook(fulllist[NUM % NUM_BAK])
             sheet = wb.get_active_sheet()
 
             studnum = st[2:5]
@@ -218,7 +218,7 @@ class App(Frame):
                 
             while True:
                 try:    
-                    wb.save(fulllist[NUM % 3])
+                    wb.save(fulllist[NUM % NUM_BAK])
                 except PermissionError:
                     input('Please close the workbook.')
                 else:
@@ -227,14 +227,14 @@ class App(Frame):
     
     def ahead(self):
         
-        global fulllist, NUM
+        global fulllist, NUM, NUM_BAK
         # Read the marks.
-        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        wb = openpyxl.load_workbook( fulllist[NUM % NUM_BAK])
         sheet = wb.get_active_sheet()
         marks = []
         for row in range(3,sheet.max_row + 1):
             marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
-        wb.save( fulllist[NUM % 3])
+        wb.save( fulllist[NUM % NUM_BAK])
         
         self.ranktext.delete(1.0, END)
         self.ranktext.insert(END, '前8名为：\n')
@@ -247,16 +247,16 @@ class App(Frame):
 
     def find_absent( self):
 
-        global fulllist, NUM
+        global fulllist, NUM, NUM_BAK
         # Open the book.
         col=19
-        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        wb = openpyxl.load_workbook( fulllist[NUM % NUM_BAK])
         sheet = wb.get_active_sheet()
         ab_stu = []
         for row in range(3,sheet.max_row + 1):
             if not sheet.cell( row=row,column=col).value:
                 ab_stu.append( sheet[ 'b'+str( row)].value)
-        wb.save( fulllist[NUM % 3])
+        wb.save( fulllist[NUM % NUM_BAK])
         
         self.course.delete( 0, END)
         for k in range( len( ab_stu)//5):
@@ -267,16 +267,16 @@ class App(Frame):
 
     def nohomework( self):
 
-        global fulllist, NUM
+        global fulllist, NUM, NUM_BAK
         # Open the book.
         col=12
-        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        wb = openpyxl.load_workbook( fulllist[NUM % NUM_BAK])
         sheet = wb.get_active_sheet()
         nohome = []
         for row in range(3,sheet.max_row + 1):
             if not sheet.cell( row=row,column=col).value:
                 nohome.append( sheet[ 'b'+str( row)].value)
-        wb.save( fulllist[NUM % 3])
+        wb.save( fulllist[NUM % NUM_BAK])
         
         self.course.delete( 0, END)
         for k in range( len( nohome)//5):
@@ -286,18 +286,18 @@ class App(Frame):
 
     def clr_absent(self):
 
-        global fulllist, NUM
+        global fulllist, NUM, NUM_BAK
         # Open the book.
-        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        wb = openpyxl.load_workbook( fulllist[NUM % NUM_BAK])
         sheet = wb.get_active_sheet()
         for row in range(3,sheet.max_row + 1):
             sheet.cell(row=row,column=19).value = 0
-        wb.save( fulllist[NUM % 3])
+        wb.save( fulllist[NUM % NUM_BAK])
         pass
 
 def getfile():
 
-    global fulllist, NUM
+    global fulllist, NUM, NUM_BAK
     # Get the directory name.
     DIRNAME = getdir()
     # Get the filename list.
@@ -309,6 +309,7 @@ def getfile():
     # File full name list.
     fulllist = getfull( DIRNAME, filelist)
     NUM = len( fulllist)
+    NUM_BAK = NUM
 
 ##test():
 # global root  # , NUM  #  root used in QUIT Button( command=root.destroy).
