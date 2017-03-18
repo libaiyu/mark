@@ -20,7 +20,7 @@ classReg = re.compile(r'\d{7}(-\d)?')
 # find the course
 courseReg = re.compile(r'-([a-z]{3,11})-')
 
-dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
+dirname = 'd:\\_PythonWorks\\Opexcel\\pscj161702'
 for file in os.listdir(dirname):
     if ChineseReg.search(file):
         # read the number and name of the students from the file that include "学生名单"

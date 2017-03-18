@@ -25,7 +25,7 @@ performance_tag = [
     ['提出问题',],
     ['回答问题',],
     ['课堂作业',],
-    ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],
+    ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],['是否已交课堂作业',],
     ]
 lab_tag = [
     ['旷课',],
@@ -87,12 +87,12 @@ class App(Frame):
         Button( self,
                 text = "选择课程",
                 command=self.sele_course
-                ).grid( column=0, row=2, sticky=(W))
+                ).grid( column=0, row=3, sticky=(W))
         
         # label.
         Label( self,
                text = '所选课程'
-               ).grid(  column=0, row=3, sticky=(W))
+               ).grid(  column=1, row=3, sticky=(W))
 
         # Entry.
         self.contents = StringVar()
@@ -120,12 +120,30 @@ class App(Frame):
                              )
         self.ranktext.grid( column=0, row=6, sticky=(W))
 
-        # "加减分项目:" button .
+        # "加减分项目" button .
         Button(self,
-               text = "加减分项目:",
+               text = "加减分项目",
                command = self.list_item
-               ).grid( column=0, row=7, sticky=(W))
+               ).grid( column=0, row=2, sticky=(W))
 
+        # "旷课者查询" button .
+        Button(self,
+               text = "旷课者查询",
+               command = self.find_absent
+               ).grid( column=1, row=2, sticky=(W))
+
+        # "清除上次课堂作业上交记录" button .
+        Button(self,
+               text = "清除上次课堂作业上交记录",
+               command = self.clr_absent
+               ).grid( column=0, row=9, sticky=(W))
+
+        # "作业未做者查询" button .
+        Button(self,
+               text = "作业未做者查询",
+               command = self.nohomework
+               ).grid( column=1, row=7, sticky=(W))
+        
         # "退出"button.
         Button(self,
                text="退出",
@@ -161,7 +179,7 @@ class App(Frame):
         for val in tagdict[coursetype]:
             self.course.insert( END, str(k)+','+str(val)+'\n')
             k += 1
-        self.contents.set('请输入项目代号2位学号3位及分数-2分记为12. 0511102.')
+        self.contents.set('请输入项目代号2位学号3位及分数-2分记为12：0511102')
         pass
 
     def markin( self, event):    #    event.??    ok.   17-3-15.
@@ -179,8 +197,10 @@ class App(Frame):
 
             studnum = st[2:5]
             for row in range(3,sheet.max_row + 1):
-                if str(sheet['b'+str(row)].value)[-3:] == studnum:           #  学号在B列
+                if str( sheet[ 'b'+str( row)].value)[-3:] == studnum:           #  学号在B列
                     # Write
+                    if itemnum == 11:
+                        sheet.cell(row=row,column=19).value += 1
                     dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
                     dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
                     self.ranktext.insert( END, dp+' ')                       # 显示加之前的分数
@@ -223,6 +243,56 @@ class App(Frame):
         for k in marks[:8]:
             # insert the ahead marks to text.
             self.ranktext.insert(END, str(k)+'\n')
+        pass
+
+    def find_absent( self):
+
+        global fulllist, NUM
+        # Open the book.
+        col=19
+        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        sheet = wb.get_active_sheet()
+        ab_stu = []
+        for row in range(3,sheet.max_row + 1):
+            if not sheet.cell( row=row,column=col).value:
+                ab_stu.append( sheet[ 'b'+str( row)].value)
+        wb.save( fulllist[NUM % 3])
+        
+        self.course.delete( 0, END)
+        for k in range( len( ab_stu)//5):
+            self.course.insert( 0, ab_stu[ 5*k:5*k+5])
+        self.course.insert( 0, ab_stu[ 5*k+5:])
+        
+        pass
+
+    def nohomework( self):
+
+        global fulllist, NUM
+        # Open the book.
+        col=12
+        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        sheet = wb.get_active_sheet()
+        nohome = []
+        for row in range(3,sheet.max_row + 1):
+            if not sheet.cell( row=row,column=col).value:
+                nohome.append( sheet[ 'b'+str( row)].value)
+        wb.save( fulllist[NUM % 3])
+        
+        self.course.delete( 0, END)
+        for k in range( len( nohome)//5):
+            self.course.insert( 0, nohome[ 5*k:5*k+5])
+        self.course.insert( 0, nohome[ 5*k+5:])
+        pass
+
+    def clr_absent(self):
+
+        global fulllist, NUM
+        # Open the book.
+        wb = openpyxl.load_workbook( fulllist[NUM % 3])
+        sheet = wb.get_active_sheet()
+        for row in range(3,sheet.max_row + 1):
+            sheet.cell(row=row,column=19).value = 0
+        wb.save( fulllist[NUM % 3])
         pass
 
 def getfile():

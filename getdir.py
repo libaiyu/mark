@@ -91,24 +91,30 @@ def item_mark( file, st, num=3):
     '''print students' number and name whose item is zero.
     '''
     import openpyxl
-
+    
+    no_flag = 0    #   no found flag = 0
+    
     wb = openpyxl.load_workbook( file)
     sheet = wb.get_active_sheet()
+    
 
     for colu in range( 1, sheet.max_column+1):
         # print( st)
-        if sheet.cell(  row=2, column=colu).value == st:
+        if sheet.cell( row=2, column=colu).value == st:
             col = colu
-    print( sheet.cell( row=2, column=col).value)
-    print('分数为0的同学有：')
-    marks = []
-    for row in range( 3, sheet.max_row + 1):
-        el = ( sheet.cell(row = row,column = col).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value)
-        marks.append( el)
-        if not sheet.cell( row=row, column=col).value:
-            print( el)
+            col_flag = 1    # found flag =1.
+    if no_flag:
+        print( sheet.cell( row=2, column=col).value)
+        print('分数为0的同学有：')
+        marks = []
+        for row in range( 3, sheet.max_row + 1):
+            el = ( sheet.cell(row = row,column = col).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value)
+            marks.append( el)
+            if not sheet.cell( row=row, column=col).value:
+                print( el)
+        prank( marks, num)
     wb.save( file)
-    prank( marks, num)
+    
 
 
 def main():

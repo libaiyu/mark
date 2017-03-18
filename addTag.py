@@ -24,7 +24,7 @@ performance_tag = [
     ['提出问题',],
     ['回答问题',],
     ['课堂作业',],
-    ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],
+    ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],['是否已交课堂作业',],
     ]
 lab_tag = [
 ##    ['学号', ],
@@ -64,7 +64,7 @@ tagdict = {'performance':performance_tag,
            'design':design_tag,
            'practice':practice_tag}
 
-dirname = 'd:\\_PythonWorks\\excelOperate\\pscj161702'
+dirname = 'd:\\_PythonWorks\\Opexcel\\pscj161702'
 # open files one by one
 count = 0
 for file in os.listdir( dirname):
