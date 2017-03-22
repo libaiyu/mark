@@ -1,6 +1,9 @@
 #! python3
 # _*_ coding: utf_8  _*_
-# Attention: this will damage all xlsx files' data
+''' Attention: this will damage all xlsx files' data   2017-2
+Add the file name prompt and need comfirm to clear the file.  2017-3-22
+
+''' 
  
 import openpyxl
 import os
@@ -20,13 +23,16 @@ for k in range(3):
 ChineseReg = re.compile(r'学生名单')
 excelReg = re.compile(r'.xlsx')
 
+dirname = getdir.getdir()
+
 wb = openpyxl.Workbook()
 sheet = wb.get_active_sheet()
-dirname = getdir.getdir()
 count = 0
 for fileName in os.listdir(dirname):
     if excelReg.search(fileName):
         if ChineseReg.search(fileName) == None:
+            print('file %s   will be cleared!' % (fileName))
+            input('anykey to continue.')
             wb.save(dirname + '\\' + fileName)
             count += 1
             print('file %s   is clear!' % (fileName))

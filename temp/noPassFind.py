@@ -1,14 +1,19 @@
 # _*_ coding: utf_8  _*_
-# read marks of many workbooks then write the marks togather for students which failed pass the exam.
+'''# read marks of many workbooks then write the marks togather for students which failed pass the exam.
 # need test.  2017-2-15
 # need used in the file 1510401.xlsx.  2017-3-4
-
+import getdir, but not test.           2017-3-22
+'''
 import openpyxl
 import os
 import re
 import logging
 
-dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
+import getdir      # 2017-3-22
+
+dirname = getdir.getdir()         # 2017-3-22
+##dirname = 'd:\\_PythonWorks\\excelOperate\\cj-2016201701'
+
 classReg = re.compile(r'\d{7}')
 
 # logging.disable(logging.CRITICAL)

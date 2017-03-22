@@ -1,16 +1,20 @@
 #! python 3
 # _*_ coding: utf_8  _*_
-# Read the number and name of the students from the file that include "学生名单".
-# Then write the number and name of the students to the new files that will note the mark for students.
-# find a bug. list of students need initial in the loop. not out of the loop. 2017-2-26.
+''' Read the number and name of the students from the file that include "学生名单".
+Then write the number and name of the students to the new files that will note the mark for students.
+find a bug. list of students need initial in the loop. not out of the loop. 2017-2-26.
+Use getdir to get the directory.  next need to distict 1620604 and 1620604-5.  2017-3-22.
+'''
 
 import openpyxl
 import os
 import re
 import logging
 
-# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
-logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+import getdir       # 2017-3-22
+
+logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
+# logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.critical('--------Start of program---------')
 
 # find the file that include '学生名单' in file
@@ -20,8 +24,11 @@ classReg = re.compile(r'\d{7}(-\d)?')
 # find the course
 courseReg = re.compile(r'-([a-z]{3,11})-')
 
-dirname = 'd:\\_PythonWorks\\Opexcel\\pscj161702'
+dirname = getdir.getdir()       # 2017-3-22
+
 for file in os.listdir(dirname):
+    logging.info( file)
+    input('debug')
     if ChineseReg.search(file):
         # read the number and name of the students from the file that include "学生名单"
         fullname = dirname + '\\' + file
@@ -49,10 +56,10 @@ for file in os.listdir(dirname):
 
         # write the number and name of the students to the new files that will note the mark for students.
         count = 0
-        for file in os.listdir(dirname):
-            classReg2 = re.compile(className + '\.')
-            if classReg2.search(file):
-                logging.info(classReg2.search(file))
+        for file in os.listdir( dirname):
+            classReg2 = re.compile( className)
+            if classReg2.search( file):
+                logging.info(classReg2.search( file))
                 if ChineseReg.search(file) == None:
                     fullname = dirname + '\\' + file
                     wb = openpyxl.load_workbook(fullname)
@@ -60,14 +67,14 @@ for file in os.listdir(dirname):
                     # Write
                     col = 2       
                     for val in students:
-                        logging.info(val)
-                        for n in range(len(students[0])):         
-                            logging.info(val[n])
-                            sheet.cell(row = 2 + n,column = col).value = val[n]
+                        logging.info( val)
+                        for n in range( len( students[0])):         
+                            logging.info( val[n])
+                            sheet.cell( row = 2 + n,column = col).value = val[n]
                         col +=1
-                    wb.save(fullname)
+                    wb.save( fullname)
                     count += 1
-                    print('There are %d files for class: %s have been written!' % (count,className))
+                    print('There are %d files for class: %s have been written!' % ( count, className))
 
 logging.critical('-------End--------')
 

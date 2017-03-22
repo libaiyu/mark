@@ -3,7 +3,7 @@
 
 def getdir():
     ''' '''
-    FILE = 'd:\\_PythonWorks\\mark\\temp\\directoryfile.txt'
+    FILE = 'd:\\_PythonWorks\\mark\\excelfiles\\directory.txt'
     try:
         dirname = open(FILE).read()
     except IOError:
@@ -121,6 +121,7 @@ def main():
     # Get the directory name.
     DIRNAME = getdir()
     print( DIRNAME)
+    input('debug')
     import os
     # Get the filename list.
     FILELIST = os.listdir( DIRNAME)

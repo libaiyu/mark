@@ -1,11 +1,14 @@
 # _*_ coding: utf_8  _*_
-# Add the tag. initial value is 0.
-# Simplify the code and check cell is None before write 0 in it.
-
+'''# Add the tag. initial value is 0.
+Simplify the code and check cell is None before write 0 in it.
+import getdir.      2017-3-22 
+'''
 import openpyxl
 import os
 import re
 import logging
+
+import getdir        #  2017-3-22 
 
 # logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
@@ -64,7 +67,8 @@ tagdict = {'performance':performance_tag,
            'design':design_tag,
            'practice':practice_tag}
 
-dirname = 'd:\\_PythonWorks\\Opexcel\\pscj161702'
+dirname = getdir.getdir()        #  2017-3-22
+
 # open files one by one
 count = 0
 for file in os.listdir( dirname):
