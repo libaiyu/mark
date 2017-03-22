@@ -3,7 +3,8 @@
 
 def getdir():
     ''' '''
-    FILE = 'd:\\_PythonWorks\\mark\\excelfiles\\directory.txt'
+    f = input('test(for testing) or work(for working):')
+    FILE = 'd:\\_PythonWorks\\mark\\directory' + f + '.txt'
     try:
         dirname = open(FILE).read()
     except IOError:
