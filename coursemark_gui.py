@@ -250,7 +250,7 @@ class App(Frame):
 
         global fulllist, NUM
         # Open the book.
-        col=19
+        col=19        # column 12 is "是否上交课堂作业"
         wb = openpyxl.load_workbook( fulllist[NUM])
         sheet = wb.get_active_sheet()
         ab_stu = []
@@ -260,17 +260,20 @@ class App(Frame):
         wb.save( fulllist[NUM])
         
         self.course.delete( 0, END)
-        for k in range( len( ab_stu)//5):
-            self.course.insert( 0, ab_stu[ 5*k:5*k+5])
-        self.course.insert( 0, ab_stu[ 5*k+5:])
-        
+        if len( ab_stu)<5:   # len( ab_stu) = 0 时，会插入一个空列，感觉比什么都没有更踏实。
+            self.course.insert( 0, ab_stu)
+        else:    #   len( ab_stu)>=5
+            for k in range( len( ab_stu)//5):
+                self.course.insert( 0, ab_stu[ 5*k:5*k+5])
+            if len( ab_stu)%5:
+                self.course.insert( 0, ab_stu[ 5*k+5:])
         pass
 
     def nohomework( self):
 
         global fulllist, NUM
         # Open the book.
-        col=12
+        col=12        # column 12 is "作业1"
         wb = openpyxl.load_workbook( fulllist[NUM])
         sheet = wb.get_active_sheet()
         nohome = []
@@ -280,9 +283,14 @@ class App(Frame):
         wb.save( fulllist[NUM])
         
         self.course.delete( 0, END)
-        for k in range( len( nohome)//5):
-            self.course.insert( 0, nohome[ 5*k:5*k+5])
-        self.course.insert( 0, nohome[ 5*k+5:])
+
+        if len( nohome) < 5:
+            self.course.insert( 0, nohome)
+        else:
+            for k in range( len( nohome)//5):
+                self.course.insert( 0, nohome[ 5*k:5*k+5])
+            if len( nohome)%5:
+                self.course.insert( 0, nohome[ 5*k+5:])
         pass
 
     def clr_absent(self):
