@@ -98,7 +98,7 @@ for file in matchlist:
     logging.info( className)
     if className is not None:
         fullname = dirname + '\\' + file
-        wb = openpyxl.Workbook()
+        wb = openpyxl.load_workbook( fullname)
         sheet = wb.get_active_sheet()
         # Write name and number.
         col = 2       
