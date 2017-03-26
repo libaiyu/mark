@@ -12,6 +12,8 @@ import openpyxl
 import os
 import re
 from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 
 from getdir import *
 
@@ -57,99 +59,66 @@ tagdict = {'performance':performance_tag,
            'design':design_tag,
            'practice':practice_tag}
 
-class App(Frame):
-    '''GUI application that manage the course.
-    '''
-
-    def __init__( self, master):
-        'Initialize the Frame.'
-
-        super( App, self).__init__(master)
-        self.grid()
+class Application(tk.Tk): # 继承自 tk.Tk
+    '''界面、逻辑分离示例'''
+    
+    def __init__(self):
+        '''初始化'''
+        super().__init__() # 有点相当于tk.Tk()
+        
         self.create_widgets()
 
     def create_widgets(self):
         'Create all kinds of widgets.'
-        
-        # Create"列出课程" button .
-        Button( self,
-                text = "列出课程",
-                command=self.listfile
-                ).grid( column=0, row=0, sticky=(W))
 
-        # Create listbox.
-        self.course =  Listbox(self,
-                               width=85, height = 6
-                               )
-        self.course.grid( column=0, row=1, sticky=(W))
+        '''界面'''
+        self.mainframe = ttk.Frame(self, padding="9 9 12 12") # 注意ttk.Frame()的第一个参数为self，因为这个类继承自tk.Tk类
+        self.mainframe.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+        self.mainframe.columnconfigure(0, weight=1)
+        self.mainframe.rowconfigure(0, weight=1)
+
+        # Create"列出课程" button .
+        Button( self.mainframe, text = "列出课程", command=self.listfile).grid( column=0, row=0, sticky=(W))
 
         # Create"选择课程" button .
-        Button( self,
-                text = "选择课程",
-                command=self.sele_course
-                ).grid( column=0, row=3, sticky=(W))
-        
-        # label.
-        Label( self,
-               text = '所选课程'
-               ).grid(  column=1, row=3, sticky=(W))
+        Button( self.mainframe, text = "选择课程", command=self.sele_course).grid( column=0, row=3, sticky=(W))
 
-        # Entry.
-        self.contents = StringVar()
-        # set it to some value
-        self.contents.set('test.')
-        self.course_ent = Entry( self,
-                                 width=85,
-                                 textvariable = self.contents
-                                 )
-        self.course_ent.grid( column=0, row=4, sticky=(W))
-        # tell the entry widget to watch this variable
-        self.course_ent["textvariable"] = self.contents
-        # when the user hits return
-        self.course_ent.bind('<Key-Return>', self.markin)
-           
         # "前8名:" button .
-        Button(self,
-               text = "前8名:",
-               command = self.ahead
-               ).grid( column=0, row=5, sticky=(W))
+        Button(self.mainframe, text = "前8名:", command = self.ahead).grid( column=0, row=5, sticky=(W))
 
+        # Create listbox.
+        self.course =  Listbox(self.mainframe, width=85, height=6)
+        self.course.grid( column=0, row=1, sticky=(W))
+
+        # label.
+        Label( self.mainframe, text = '所选课程').grid(  column=1, row=3, sticky=(W))
+
+        self.contents = StringVar()
+        self.contents.set('test.')        # set it to some value
+        # Entry.
+        self.course_ent = Entry( self.mainframe, width=85, textvariable = self.contents)
+        self.course_ent.grid( column=0, row=4, sticky=(W))
+        self.course_ent["textvariable"] = self.contents    # tell the entry widget to watch this variable
+        self.course_ent.bind('<Key-Return>', self.markin)  # when the user hits return
+        
         # text.
-        self.ranktext = Text(self,
-                             height=10, width=30, wrap='word'
-                             )
+        self.ranktext = Text(self.mainframe, height=10, width=36, wrap='word')
         self.ranktext.grid( column=0, row=6, sticky=(W))
 
         # "加减分项目" button .
-        Button(self,
-               text = "加减分项目",
-               command = self.list_item
-               ).grid( column=0, row=2, sticky=(W))
+        Button(self.mainframe, text = "加减分项目", command = self.list_item).grid( column=0, row=2, sticky=(W))
 
         # "旷课者查询" button .
-        Button(self,
-               text = "旷课者查询",
-               command = self.find_absent
-               ).grid( column=1, row=2, sticky=(W))
+        Button(self.mainframe, text = "旷课者查询", command = self.find_absent).grid( column=1, row=0, sticky=(W))
 
         # "清除上次课堂作业上交记录" button .
-        Button(self,
-               text = "清除上次课堂作业上交记录",
-               command = self.clr_absent
-               ).grid( column=0, row=9, sticky=(W))
+        Button(self.mainframe, text = "清除上次课堂作业上交记录", command = self.clr_absent).grid( column=0, row=9, sticky=(W))
 
         # "作业未做者查询" button .
-        Button(self,
-               text = "作业未做者查询",
-               command = self.nohomework
-               ).grid( column=1, row=7, sticky=(W))
-        
+        Button(self.mainframe, text = "作业未做者查询", command = self.nohomework).grid( column=1, row=2, sticky=(W))
+
         # "退出"button.
-        Button(self,
-               text="退出",
-               fg="red",
-               command=root.destroy
-               ).grid(  column=0, row=11, sticky=(W))
+        Button(self.mainframe, text="退出", fg="red", command=self.mainframe.destroy).grid(  column=0, row=11, sticky=(W))
 
     def sele_course(self):
         
@@ -319,17 +288,20 @@ def getfile():
     fulllist = getfull( DIRNAME, filelist)
     NUM = len( fulllist) - 1
 
-def main():
+if __name__ == '__main__':  #  __main__ is not correct.
 
-    global root  # , NUM  #  root used in QUIT Button( command=root.destroy).
+
     getfile()
-    root = Tk()
-    root.title("课程平时成绩")
-    root.geometry('580x380')
-    app = App(master=root)
+    
+    # 实例化Application
+    app = Application()
+    
+    # 设置窗口标题
+    app.title("课程平时成绩")
+    
+    # 主消息循环:
     app.mainloop()
+    
     print('End')
 
-if __name__ == '__main__':  #  __main__ is not correct.
-    main()
     
