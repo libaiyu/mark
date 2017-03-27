@@ -160,6 +160,12 @@ class StartPage(tk.Frame):
         self.course_ent["textvariable"] = contents    # tell the entry widget to watch this variable
         # self.course_ent.bind('<Key-Return>', self.markin)  # when the user hits return
 
+        # "前8名:" button .
+        Button(self.mainframe, text = "前8名:", command = self.ahead).pack()
+        
+        # text.
+        self.ranktext = Text(self.mainframe, height=10, width=65, wrap='word')
+        self.ranktext.pack()
 
     def listfile(self):     #  "列出课程"
         
@@ -171,7 +177,9 @@ class StartPage(tk.Frame):
     def sele_course(self):    # "选择课程"
         
         global fulllist, NUM
-        if NUM >= 0:
+        if NUM <= 0:
+            NUM = len( fulllist)
+        if NUM > 0:
             # every click, NUM decrease 1. to select the next course.
             NUM -= 1       #  decrease must be place here.
             contents.set( fulllist[NUM])
@@ -180,8 +188,7 @@ class StartPage(tk.Frame):
 ##            PageTwo.create_widgets.contents.set( fulllist[NUM])
             # PageThree.contents.set( fulllist[NUM])
             
-            if NUM < 0:
-                NUM = len( fulllist) - 1
+
         pass
 
 
@@ -241,27 +248,27 @@ class StartPage(tk.Frame):
 ##                else:
 ##                    break
 ##            pass
-##    
-##    def ahead(self):
-##        
-##        global fulllist, NUM
-##        # Read the marks.
-##        wb = openpyxl.load_workbook( fulllist[NUM])
-##        sheet = wb.get_active_sheet()
-##        marks = []
-##        for row in range(3,sheet.max_row + 1):
-##            marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
-##        wb.save( fulllist[NUM])
-##        
-##        self.ranktext.delete(1.0, END)
-##        self.ranktext.insert(END, '前8名为：\n')
-##        # rank the marks.
-##        marks.sort(reverse=True)
-##        for k in marks[:8]:
-##            # insert the ahead marks to text.
-##            self.ranktext.insert(END, str(k)+'\n')
-##        pass
-##
+    
+    def ahead(self):
+        
+        global fulllist, NUM
+        # Read the marks.
+        wb = openpyxl.load_workbook( fulllist[NUM])
+        sheet = wb.get_active_sheet()
+        marks = []
+        for row in range(3,sheet.max_row + 1):
+            marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
+        wb.save( fulllist[NUM])
+        
+        self.ranktext.delete(1.0, END)
+        self.ranktext.insert(END, '前8名为：\n')
+        # rank the marks.
+        marks.sort(reverse=True)
+        for k in marks[:8]:
+            # insert the ahead marks to text.
+            self.ranktext.insert(END, str(k)+'\n')
+        pass
+
 ##    def find_absent( self):
 ##
 ##        global fulllist, NUM
@@ -350,10 +357,7 @@ class PageOne(tk.Frame):
         # Entry 1.
         self.course_ = Entry( self.mainframe, width=85, textvariable = contents)
         self.course_.pack()
-        self.course_["textvariable"] = contents    # tell the entry widget to watch this variable
-
-        # "加减分项目" button .
-        Button(self.mainframe, text = "加减分项目", command = self.list_item).pack()
+        self.course_["textvariable"] = contents    # watch this global variable
 
         # "旷课者查询" button .
         Button(self.mainframe, text = "旷课者查询", command = self.find_absent).pack()
@@ -361,6 +365,9 @@ class PageOne(tk.Frame):
         # Create listbox.
         self.course =  Listbox(self.mainframe, width=85, height=6)
         self.course.pack()
+
+        # "加减分项目" button .
+        Button(self.mainframe, text = "加减分项目", command = self.list_item).pack()
         
         self.cont = StringVar()
         self.cont.set('请输入项目代号2位学号3位及分数-2分记为12：0511102')   # set it to some value
@@ -374,7 +381,7 @@ class PageOne(tk.Frame):
         Button(self.mainframe, text = "前8名:", command = self.ahead).pack()
         
         # text.
-        self.ranktext = Text(self.mainframe, height=10, width=50, wrap='word')
+        self.ranktext = Text(self.mainframe, height=10, width=65, wrap='word')
         self.ranktext.pack()
 
         # "清除上次课堂作业上交记录" button .
@@ -389,7 +396,7 @@ class PageOne(tk.Frame):
         self.course.delete( 0, END) # self.ranktext.delete(0.0, END)
         coursetype = course_reg.search( fulllist[NUM]).group(1)
         k = 0
-        for val in tagdict[coursetype]:
+        for val in tagdict[coursetype][:6]:
             self.course.insert( END, str(k)+','+str(val)+'\n')
             k += 1
         self.cont.set('0411102')
@@ -416,7 +423,7 @@ class PageOne(tk.Frame):
                         sheet.cell(row=row,column=19).value += 1
                     dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
                     dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
-                    self.ranktext.insert( END, dp+' ')                       # 显示加之前的分数
+                    self.ranktext.insert( 0.0, dp+' ')                       # 显示加之前的分数
                     mark = st[6:]
                     if st[5]=='0':
                         sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加的分数
@@ -424,7 +431,7 @@ class PageOne(tk.Frame):
                     elif st[5]=='1':
                         sheet.cell(row = row,column = itemnum).value -= int(mark)    # 减去要减的分数
                         sheet.cell(row = row,column = 4).value -= int(mark)          # 总分也减去该分数
-                    dp = str( sheet.cell( row = row,column = itemnum).value)
+                    dp = studnum +':'+ str( sheet.cell( row = row,column = itemnum).value)
                     dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
                     self.ranktext.insert( END, dp+' ')                     # 显示加之后的分数
                     break
@@ -563,6 +570,9 @@ class PageTwo(tk.Frame):
         self.course_ent["textvariable"] = self.cont    # tell the entry widget to watch this variable
         self.course_ent.bind('<Key-Return>', self.markin)  # when the user hits return
 
+        # "提示输入第几次作业" label .
+        Label(self.mainframe, text = "请输入要查询第几次作业").pack()
+        
         # "作业未做者查询" button .
         Button(self.mainframe, text = "作业未做者查询", command = self.nohomework).pack()
         
@@ -681,24 +691,27 @@ class PageTwo(tk.Frame):
     def nohomework( self):
 
         global fulllist, NUM
-        # Open the book.
 
         self.course.delete( 0, END)
+        # input('please input a number for the homework you want to check.')  # how to prompt .
         which = self.course_ent.get()
 ##        self.cont.set["textvariable"] = '第几次作业？which ='
 ##        which = int( input( '第几次作业？'))
         self.course.insert( 0, which)
         col= int(which) + 11        # column 12 is "作业1"
+        # Open the book.
         wb = openpyxl.load_workbook( fulllist[NUM])
         sheet = wb.get_active_sheet()
         nohome = []
         for row in range(3,sheet.max_row + 1):
             if not sheet.cell( row=row,column=col).value:
                 nohome.append( sheet[ 'b'+str( row)].value)
+##        try:
         wb.save( fulllist[NUM])
-        
-
-
+##        except KeyError:
+##            # print('please input a number for the homework you want to check.')
+##            self.course.set('please input a number for the homework you want to check.')
+            
         if len( nohome) < 5:
             self.course.insert( 0, nohome)
         else:
@@ -744,7 +757,7 @@ def getfile():
     filelist.sort()       
     # File full name list.
     fulllist = getfull( DIRNAME, filelist)
-    NUM = len( fulllist) - 1
+    NUM = len( fulllist)
 
 if __name__ == '__main__':  #  __main__ is not correct.
 

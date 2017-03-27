@@ -123,12 +123,12 @@ class Application(tk.Tk): # 继承自 tk.Tk
     def sele_course(self):
         
         global fulllist, NUM
-        if NUM >= 0:
+        if NUM <= 0:
+            NUM = len( fulllist)
+        if NUM > 0:
             # every click, NUM decrease 1. to select the next course.
             NUM -= 1       #  decrease must be place here.
             self.contents.set( fulllist[NUM])
-            if NUM < 0:
-                NUM = len( fulllist) - 1
         pass
 
     def listfile(self):
@@ -286,7 +286,7 @@ def getfile():
     filelist.sort()       
     # File full name list.
     fulllist = getfull( DIRNAME, filelist)
-    NUM = len( fulllist) - 1
+    NUM = len( fulllist)
 
 if __name__ == '__main__':  #  __main__ is not correct.
 
