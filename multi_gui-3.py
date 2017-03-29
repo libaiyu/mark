@@ -9,7 +9,7 @@ Minus mark can be written now.             2017-3-16  morning
 It can be run arbitrary.                   2017-3-16  22:10
 
 多页面                2017-3-26
-加了查询作业上交情况前的输入提示    2017-3-28
+增加查询作业上交情况前的输入提示    2017-3-28
 ''' 
 
 import openpyxl
@@ -400,51 +400,130 @@ class PageOne(tk.Frame):
         for val in tagdict[coursetype][:6]:
             self.course.insert( END, str(k)+','+str(val)+'\n')
             k += 1
-        self.cont.set('0411102')
+        self.cont.set('0411102,11203,21112,0512301,0521301,222,223')
         pass
-
+    
+############
+    
     def markin( self, event):    #    event.??    ok.   17-3-15.
-        # modify the mark.
+        # mark update.
         
         global fulllist, NUM
-        
-        st = self.course_ent.get()
+
+        # get the multi marks from Entry 2.
+        st = self.course_ent.get()   #  multi marks split by ",".
         print( st)
-        if st.isdigit():
-            itemnum = 6 + int( st[:2])
 
-            wb = openpyxl.load_workbook(fulllist[NUM])
-            sheet = wb.get_active_sheet()
+        # split each mark.
+        mm = st.split(',')       
+        print (mm)
 
-            studnum = st[2:5]
+        # get the itemnum, studnum, mark list.
+        itemnum = []
+        studnum = []
+        mark = []
+        
+        for e in range(len(mm)):
+            if not mm[e].isdigit():    # each mark should be digit. if so, it will write in.
+                break                  # till mark is not digit, break.
+
+            if len(mm[e]) == 7:          # item, student number, mark.
+                print(mm[e],type(mm[e]))
+                ittemp = 6 + int( mm[e][:2])
+                itemnum.append( ittemp)
+                studnum.append( mm[e][2:5])
+                marktemp = mm[e][5:]
+                mark.append( marktemp)
+            elif len(mm[e]) == 5:        # item no change, student number change, mark change.
+                itemnum.append( ittemp)   # item no change.
+                studnum.append( mm[e][:3])
+                marktemp =  mm[e][3:]
+                mark.append( marktemp)
+            elif len(mm[e]) == 3:        # item no change, student number change, mark no change.
+                itemnum.append( ittemp)
+                studnum.append( mm[e])
+                mark.append( marktemp)   #  mark no change.
+            else:
+                print('数字位数不对。')
+                pass
+        print( itemnum, studnum, mark)
+
+        # open the excel file.
+        wb = openpyxl.load_workbook(fulllist[NUM])
+        sheet = wb.get_active_sheet()
+        
+        for e in range(len(studnum)):
             for row in range(3,sheet.max_row + 1):
-                if str( sheet[ 'b'+str( row)].value)[-3:] == studnum:           #  学号在B列
+                if str( sheet[ 'b'+str( row)].value)[-3:] == studnum[e]:           #  学号在B列
                     # Write
-                    if itemnum == 11:      # 课堂作业已做，说明来上课了。
-                        sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课
-                    dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
+                    if itemnum[e] == 11:      # 课堂作业已做，说明来上课了。
+                        sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课,1 is nomal, 2 means repeat write.
+                    dp = studnum[e] +':'+ str( sheet.cell(row = row,column = itemnum[e]).value)
                     dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
                     self.ranktext.insert( 0.0, dp+' ')                       # 显示加之前的分数
-                    mark = st[6:]
-                    if st[5]=='0':
-                        sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加的分数
-                        sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
-                    elif st[5]=='1':
-                        sheet.cell(row = row,column = itemnum).value -= int(mark)    # 减去要减的分数
-                        sheet.cell(row = row,column = 4).value -= int(mark)          # 总分也减去该分数
-                    dp = studnum +':'+ str( sheet.cell( row = row,column = itemnum).value)
+                    if mark[e][:1]=='0':
+                        sheet.cell(row = row,column = itemnum[e]).value += int(mark[e][1:])        # 加上要加的分数
+                        sheet.cell(row = row,column = 4).value += int(mark[e][1:])              # 总分也加上该分数
+                    elif mark[e][:1]=='1':
+                        sheet.cell(row = row,column = itemnum[e]).value -= int(mark[e][1:])    # 减去要减的分数
+                        sheet.cell(row = row,column = 4).value -= int(mark[e][1:])          # 总分也减去该分数
+                    dp = studnum[e] +':'+ str( sheet.cell( row = row,column = itemnum[e]).value)
                     dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
                     self.ranktext.insert( END, dp+' ')                     # 显示加之后的分数
                     break
                 
-            while True:
-                try:    
-                    wb.save(fulllist[NUM])
-                except PermissionError:
-                    input('Please close the workbook.')
-                else:
-                    break
-            pass
+        while True:
+            try:    
+                wb.save(fulllist[NUM])
+            except PermissionError:
+                input('Please close the workbook.')
+            else:
+                break
+        pass
+
+
+##    def markin( self, event):    #    event.??    ok.   17-3-15.
+##        # modify the mark.
+##        
+##        global fulllist, NUM
+##        
+##        st = self.course_ent.get()
+##        print( st)
+##        if st.isdigit():
+##            itemnum = 6 + int( st[:2])
+##
+##            wb = openpyxl.load_workbook(fulllist[NUM])
+##            sheet = wb.get_active_sheet()
+##
+##            studnum = st[2:5]
+##            for row in range(3,sheet.max_row + 1):
+##                if str( sheet[ 'b'+str( row)].value)[-3:] == studnum:           #  学号在B列
+##                    # Write
+##                    if itemnum == 11:      # 课堂作业已做，说明来上课了。
+##                        sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课
+##                    dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
+##                    dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
+##                    self.ranktext.insert( 0.0, dp+' ')                       # 显示加之前的分数
+##                    mark = st[6:]
+##                    if st[5]=='0':
+##                        sheet.cell(row = row,column = itemnum).value += int(mark)        # 加上要加的分数
+##                        sheet.cell(row = row,column = 4).value += int(mark)              # 总分也加上该分数
+##                    elif st[5]=='1':
+##                        sheet.cell(row = row,column = itemnum).value -= int(mark)    # 减去要减的分数
+##                        sheet.cell(row = row,column = 4).value -= int(mark)          # 总分也减去该分数
+##                    dp = studnum +':'+ str( sheet.cell( row = row,column = itemnum).value)
+##                    dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
+##                    self.ranktext.insert( END, dp+' ')                     # 显示加之后的分数
+##                    break
+##                
+##            while True:
+##                try:    
+##                    wb.save(fulllist[NUM])
+##                except PermissionError:
+##                    input('Please close the workbook.')
+##                else:
+##                    break
+##            pass
     
     def ahead(self):
         
