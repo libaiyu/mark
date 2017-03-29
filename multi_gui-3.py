@@ -9,6 +9,7 @@ Minus mark can be written now.             2017-3-16  morning
 It can be run arbitrary.                   2017-3-16  22:10
 
 多页面                2017-3-26
+加了查询作业上交情况前的输入提示    2017-3-28
 ''' 
 
 import openpyxl
@@ -419,8 +420,8 @@ class PageOne(tk.Frame):
             for row in range(3,sheet.max_row + 1):
                 if str( sheet[ 'b'+str( row)].value)[-3:] == studnum:           #  学号在B列
                     # Write
-                    if itemnum == 11:
-                        sheet.cell(row=row,column=19).value += 1
+                    if itemnum == 11:      # 课堂作业已做，说明来上课了。
+                        sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课
                     dp = studnum +':'+ str( sheet.cell(row = row,column = itemnum).value)
                     dp += '总分:'+ str( sheet.cell(row = row,column = 4).value)
                     self.ranktext.insert( 0.0, dp+' ')                       # 显示加之前的分数
