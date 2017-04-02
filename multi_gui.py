@@ -307,7 +307,7 @@ class PageOne(tk.Frame):
         coursetype = course_reg.search( fulllist[NUM]).group(1)
         k = 0
         for val in tagdict[coursetype]:
-            self.itemtext.insert( END, str(k)+','+str(val)+'\t')
+            self.itemtext.insert( END, str(k)+','+str(val)+'\t\t')
             k += 1
         self.cont.set('0522702,112,123,201,217,221,210,126,215,133,205,127,125,207,208')
         pass
@@ -490,25 +490,62 @@ class PageTwo(tk.Frame):
         # "提示输入第几次作业" label .
         Label(self.mainframe, text = "请输入要查询第几次作业").pack()
 
-        self.homework = StringVar()
-        self.homework.set('2')   # 2 means the second homework.
+        self.whichhw = StringVar()
+        self.whichhw.set('2')   # 2 means the second homework.
         # Entry 3.
-        self.homew_ent = Entry( self.mainframe, width=3, textvariable = self.homework)
+        self.homew_ent = Entry( self.mainframe, width=3, textvariable = self.whichhw)
         self.homew_ent.pack()
+        
+        # "作业已做者查询" button .
+        Button(self.mainframe, text = "作业已做者查询", command = self.homeworkck).pack()
         
         # "作业未做者查询" button .
         Button(self.mainframe, text = "作业未做者查询", command = self.nohomework).pack()
         
         # '查询结果' listbox.
-        self.nohw = Listbox(self.mainframe, width=85, height=15)
-        self.nohw.pack()
+        self.homework_listbox = Listbox(self.mainframe, width=85, height=15)
+        self.homework_listbox.pack()
         
 ##        # text.    # text display is not good as listbox
-##        self.nohw = Text(self.mainframe, height=15, width=85, wrap='word')
-##        self.nohw.pack()
+##        self.homework_listbox = Text(self.mainframe, height=15, width=85, wrap='word')
+##        self.homework_listbox.pack()
         
         # Create"清空列表框" button .
         Button( self.mainframe, text = "清空列表框", command=self.clrlistbox).pack()
+
+    def homeworkck( self):
+        
+        global fulllist, NUM
+        
+        # which homework.
+        which = self.homew_ent.get()
+        
+        col= int(which) + 11        # column 12 is "作业1"
+        # Open the book.
+        wb = openpyxl.load_workbook( fulllist[NUM])
+        sheet = wb.get_active_sheet()
+        homework = []
+        for row in range(3,sheet.max_row + 1):
+            if sheet.cell( row=row,column=col).value:
+                homework.append( sheet[ 'b'+str( row)].value)
+##        try:
+        wb.save( fulllist[NUM])
+##        except KeyError:
+##            # print('please input a number for the homework you want to check.')
+##            self.course.set('please input a number for the homework you want to check.')
+        
+        # display the student number who have not submit the homework.
+        
+##        self.homework_listbox.insert( 0, '\n')
+        if len( homework) < 5:
+            self.homework_listbox.insert( 0, homework)
+        else:
+            for k in range( len( homework)//5):
+                self.homework_listbox.insert( 0, homework[ 5*k:5*k+5])
+            if len( homework)%5:
+                self.homework_listbox.insert( 0, homework[ 5*k+5:])
+        self.homework_listbox.insert( 0, '第'+ which+'次作业 已做者：\n')        
+        pass
 
         
     def nohomework( self):
@@ -521,7 +558,7 @@ class PageTwo(tk.Frame):
 ##        self.cont.set["textvariable"] = '第几次作业？which ='
 ##        which = int( input( '第几次作业？'))
 ##        self.course.insert( 0, which)
-##        self.nohw.insert( 0, which)
+##        self.homework_listbox.insert( 0, which)
         col= int(which) + 11        # column 12 is "作业1"
         # Open the book.
         wb = openpyxl.load_workbook( fulllist[NUM])
@@ -546,19 +583,19 @@ class PageTwo(tk.Frame):
 ##            if len( nohome)%5:
 ##                self.course.insert( 0, nohome[ 5*k+5:])
 
-##        self.nohw.insert( 0, '\n')
+##        self.homework_listbox.insert( 0, '\n')
         if len( nohome) < 5:
-            self.nohw.insert( 0, nohome)
+            self.homework_listbox.insert( 0, nohome)
         else:
             for k in range( len( nohome)//5):
-                self.nohw.insert( 0, nohome[ 5*k:5*k+5])
+                self.homework_listbox.insert( 0, nohome[ 5*k:5*k+5])
             if len( nohome)%5:
-                self.nohw.insert( 0, nohome[ 5*k+5:])
-        self.nohw.insert( 0, '第'+ which+'次作业 未做者：\n')        
+                self.homework_listbox.insert( 0, nohome[ 5*k+5:])
+        self.homework_listbox.insert( 0, '第'+ which+'次作业 未做者：\n')        
         pass
     
     def clrlistbox(self):
-        self.nohw.delete( 0, END)
+        self.homework_listbox.delete( 0, END)
         pass
 
 
