@@ -217,7 +217,7 @@ class StartPage(tk.Frame):
             marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
         wb.save( fulllist[NUM])
         
-        # self.ranklist.delete(1.0, END)
+        # self.list_box.delete(1.0, END)
 ##        self.course.insert( 0, '前8名为：\n')
         # rank the marks.
         marks.sort(reverse=True)
@@ -265,8 +265,8 @@ class PageOne(tk.Frame):
         Button(self.mainframe, text = "排名:", command = self.ahead).pack()
         
         # "显示" listbox.
-        self.ranklist = Listbox(self.mainframe, height=12, width=88)
-        self.ranklist.pack()
+        self.list_box = Listbox(self.mainframe, height=12, width=88)
+        self.list_box.pack()
 
         # Create"清空列表框" button .
         Button( self.mainframe, text = "清空列表框", command=self.clrlistbox).pack()
@@ -303,7 +303,7 @@ class PageOne(tk.Frame):
         global fulllist, NUM
         
         # list the item according to the coursetpye.
-##        self.itemtext.delete( 0, END) # self.ranklist.delete(0.0, END)
+##        self.itemtext.delete( 0, END) # self.list_box.delete(0.0, END)
         coursetype = course_reg.search( fulllist[NUM]).group(1)
         k = 0
         for val in tagdict[coursetype]:
@@ -368,7 +368,7 @@ class PageOne(tk.Frame):
                         sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课,1 is nomal, 2 means repeat write.
                     dp = studnum[e] +':'+ str( sheet.cell(row = row,column = itemnum[e]).value)
                     dp += '-'+ str( sheet.cell(row = row,column = 4).value)+'->'
-##                    self.ranklist.insert( 0, dp+' ')                       # 显示加之前的分数
+##                    self.list_box.insert( 0, dp+' ')                       # 显示加之前的分数
                     if mark[e][:1]=='0':
                         sheet.cell(row = row,column = itemnum[e]).value += int(mark[e][1:])        # 加上要加的分数
                         sheet.cell(row = row,column = 4).value += int(mark[e][1:])              # 总分也加上该分数
@@ -377,7 +377,7 @@ class PageOne(tk.Frame):
                         sheet.cell(row = row,column = 4).value -= int(mark[e][1:])          # 总分也减去该分数
                     dp += str( sheet.cell( row = row,column = itemnum[e]).value)
                     dp += '-'+ str( sheet.cell(row = row,column = 4).value)
-                    self.ranklist.insert( 0, dp+'  ')                     # 显示加之前加之后的分数   0  END
+                    self.list_box.insert( 0, dp+'  ')                     # 显示加之前加之后的分数   0  END
                     break
         pass
 
@@ -403,13 +403,13 @@ class PageOne(tk.Frame):
             marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
         wb.save( fulllist[NUM])
         
-##        self.ranklist.delete(1.0, END)
+##        self.list_box.delete(1.0, END)
         # rank the marks.
         marks.sort()
         for k in marks[:]:
             # insert the ahead marks to text.
-            self.ranklist.insert(0, str(k)+'\n')
-        self.ranklist.insert(0, '排名为：\n')
+            self.list_box.insert(0, str(k)+'\n')
+        self.list_box.insert(0, '排名为：\n')
         pass
 
     def find_absent( self):
@@ -425,17 +425,17 @@ class PageOne(tk.Frame):
                 ab_stu.append( sheet[ 'b'+str( row)].value)
         wb.save( fulllist[NUM])
         
-##        self.ranklist.delete( 0, END)
-##        self.ranklist.insert( 0, '\n')
+##        self.list_box.delete( 0, END)
+##        self.list_box.insert( 0, '\n')
         if len( ab_stu)<5:   # len( ab_stu) = 0 时，会插入一个空列，感觉比什么都没有更踏实。
-            self.ranklist.insert( 0, ab_stu)
+            self.list_box.insert( 0, ab_stu)
         else:    #   len( ab_stu)>=5
             for k in range( len( ab_stu)//5):
-                self.ranklist.insert( 0, ab_stu[ 5*k:5*k+5])
+                self.list_box.insert( 0, ab_stu[ 5*k:5*k+5])
             if len( ab_stu)%5:
-                self.ranklist.insert( 0, ab_stu[ 5*k+5:])
+                self.list_box.insert( 0, ab_stu[ 5*k+5:])
         pass
-        self.ranklist.insert( 0, '旷课者：\n')
+        self.list_box.insert( 0, '旷课者：\n')
 
 
     def clr_absent(self):
@@ -450,7 +450,7 @@ class PageOne(tk.Frame):
         pass
 
     def clrlistbox(self):
-        self.ranklist.delete( 0, END)
+        self.list_box.delete( 0, END)
         pass
     
     def clrtext(self):
@@ -503,12 +503,15 @@ class PageTwo(tk.Frame):
         Button(self.mainframe, text = "作业未做者查询", command = self.nohomework).pack()
         
         # '查询结果' listbox.
-        self.homework_listbox = Listbox(self.mainframe, width=85, height=15)
-        self.homework_listbox.pack()
+        self.list_box = Listbox(self.mainframe, width=85, height=15)
+        self.list_box.pack()
+
+        # "排名:" button .
+        Button(self.mainframe, text = "排名:", command = self.ahead).pack()
         
 ##        # text.    # text display is not good as listbox
-##        self.homework_listbox = Text(self.mainframe, height=15, width=85, wrap='word')
-##        self.homework_listbox.pack()
+##        self.list_box = Text(self.mainframe, height=15, width=85, wrap='word')
+##        self.list_box.pack()
         
         # Create"清空列表框" button .
         Button( self.mainframe, text = "清空列表框", command=self.clrlistbox).pack()
@@ -536,15 +539,15 @@ class PageTwo(tk.Frame):
         
         # display the student number who have not submit the homework.
         
-##        self.homework_listbox.insert( 0, '\n')
+##        self.list_box.insert( 0, '\n')
         if len( homework) < 5:
-            self.homework_listbox.insert( 0, homework)
+            self.list_box.insert( 0, homework)
         else:
             for k in range( len( homework)//5):
-                self.homework_listbox.insert( 0, homework[ 5*k:5*k+5])
+                self.list_box.insert( 0, homework[ 5*k:5*k+5])
             if len( homework)%5:
-                self.homework_listbox.insert( 0, homework[ 5*k+5:])
-        self.homework_listbox.insert( 0, '第'+ which+'次作业 已做者：\n')        
+                self.list_box.insert( 0, homework[ 5*k+5:])
+        self.list_box.insert( 0, '第'+ which+'次作业 已做者：\n')        
         pass
 
         
@@ -558,7 +561,7 @@ class PageTwo(tk.Frame):
 ##        self.cont.set["textvariable"] = '第几次作业？which ='
 ##        which = int( input( '第几次作业？'))
 ##        self.course.insert( 0, which)
-##        self.homework_listbox.insert( 0, which)
+##        self.list_box.insert( 0, which)
         col= int(which) + 11        # column 12 is "作业1"
         # Open the book.
         wb = openpyxl.load_workbook( fulllist[NUM])
@@ -583,19 +586,39 @@ class PageTwo(tk.Frame):
 ##            if len( nohome)%5:
 ##                self.course.insert( 0, nohome[ 5*k+5:])
 
-##        self.homework_listbox.insert( 0, '\n')
+##        self.list_box.insert( 0, '\n')
         if len( nohome) < 5:
-            self.homework_listbox.insert( 0, nohome)
+            self.list_box.insert( 0, nohome)
         else:
             for k in range( len( nohome)//5):
-                self.homework_listbox.insert( 0, nohome[ 5*k:5*k+5])
+                self.list_box.insert( 0, nohome[ 5*k:5*k+5])
             if len( nohome)%5:
-                self.homework_listbox.insert( 0, nohome[ 5*k+5:])
-        self.homework_listbox.insert( 0, '第'+ which+'次作业 未做者：\n')        
+                self.list_box.insert( 0, nohome[ 5*k+5:])
+        self.list_box.insert( 0, '第'+ which+'次作业 未做者：\n')        
         pass
     
     def clrlistbox(self):
-        self.homework_listbox.delete( 0, END)
+        self.list_box.delete( 0, END)
+        pass
+
+    def ahead(self):
+        
+        global fulllist, NUM
+        # Read the marks.
+        wb = openpyxl.load_workbook( fulllist[NUM])
+        sheet = wb.get_active_sheet()
+        marks = []
+        for row in range(3,sheet.max_row + 1):
+            marks.append((sheet.cell(row = row,column = 4).value, sheet['b'+str(row)].value, sheet['c'+str(row)].value))
+        wb.save( fulllist[NUM])
+        
+##        self.list_box.delete(1.0, END)
+        # rank the marks.
+        marks.sort()
+        for k in marks[:]:
+            # insert the ahead marks to text.
+            self.list_box.insert(0, str(k)+'\n')
+        self.list_box.insert(0, '排名为：\n')
         pass
 
 
