@@ -17,16 +17,16 @@ import os
 import re
 from tkinter import *
 import tkinter as tk
-# from tkinter import ttk
+from tkinter import ttk
 
-from getdir import *
+from getdir import getdir, filesele, getfull
 
 # course
-course_reg = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
+COURSE_REG = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
 
 global contents             # global variable
 
-performance_tag = [
+PERFORMANCE_TAG = [
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -35,7 +35,7 @@ performance_tag = [
     ['课堂作业',],
     ['作业1',],['作业2',],['作业3',],['作业4',],['作业5',],['作业6',],['作业7',],['是否已交课堂作业',],
     ]
-lab_tag = [
+LAB_TAG = [
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -43,7 +43,7 @@ lab_tag = [
     ['数据1',],['数据2',],['数据3',],['数据4',],['数据5',],['数据6',],['数据7',],['数据8',],   
     ['报告1',],['报告2',],['报告3',],['报告4',],
     ]
-design_tag = [
+DESIGN_TAG = [
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -51,7 +51,7 @@ design_tag = [
     ['数据1',],['数据2',],['数据3',],['数据4',],  
     ['报告1',],['报告2',],
     ]
-practice_tag = [
+PRACTICE_TAG = [
     ['旷课',],
     ['迟到',],
     ['早退',],
@@ -59,15 +59,14 @@ practice_tag = [
     ['数据1',],['数据2',],['数据3',],['数据4',],   
     ['报告1',],['报告2',],    
     ]
-
-tagdict = {'performance':performance_tag,
-           'lab':lab_tag,
-           'design':design_tag,
-           'practice':practice_tag}
+TAGDICT = {'performance':PERFORMANCE_TAG,
+           'lab':LAB_TAG,
+           'design':DESIGN_TAG,
+           'practice':PRACTICE_TAG}
 
 
 import matplotlib
-matplotlib.use("TkAgg")
+matplotlib.use("tkagg")
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -304,12 +303,12 @@ class PageOne(tk.Frame):
         
         # list the item according to the coursetpye.
 ##        self.itemtext.delete( 0, END) # self.list_box.delete(0.0, END)
-        coursetype = course_reg.search( fulllist[NUM]).group(1)
+        coursetype = COURSE_REG.search( fulllist[NUM]).group(1)
         k = 0
-        for val in tagdict[coursetype]:
+        for val in TAGDICT[coursetype]:
             self.itemtext.insert( END, str(k)+','+str(val)+'\t\t')
             k += 1
-        self.cont.set('0522702,112,123,201,217,221,210,126,215,133,205,127,125,207,208')
+        self.cont.set('0522702')
         pass
     
     
@@ -640,7 +639,7 @@ def getfile():
     # Get the filename list.
     FILELIST = os.listdir( DIRNAME)
     # Get the filename list include coursetype.
-    filelist = filesele( FILELIST, course_reg)
+    filelist = filesele( FILELIST, COURSE_REG)
     # sort the filelist. so the index of the file is nochange.
     filelist.sort()       
     # File full name list.
@@ -657,10 +656,10 @@ if __name__ == '__main__':  #  __main__ is not correct.
     getfile()
     
     # 实例化Application
-    app = Application()
+    APP = Application()
     
     # 主消息循环:
-    app.mainloop()
+    APP.mainloop()
     
     print('End')
 
