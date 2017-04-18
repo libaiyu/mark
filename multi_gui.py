@@ -115,9 +115,9 @@ class StartPage(tk.Frame):
         super().__init__(parent)
         label = tk.Label(self, text="选课程", font=LARGE_FONT)
         label.pack()
-
-        button1 = ttk.Button(self, text="去到课堂", command=lambda: root.show_frame(PageOne)).pack()
-        button2 = ttk.Button(self, text="去到课后", command=lambda: root.show_frame(PageTwo)).pack()
+        
+        button1 = ttk.Button(self, text="去到课后", command=lambda: root.show_frame(PageTwo)).pack()
+        button2 = ttk.Button(self, text="去到成绩录入", command=lambda: root.show_frame(PageOne)).pack()
 ##        button3 = ttk.Button(self, text="去到其他", command=lambda: root.show_frame(PageThree)).pack()
 
 
@@ -232,10 +232,10 @@ class StartPage(tk.Frame):
         pass
 
 class PageOne(tk.Frame):
-    '''课堂'''
+    '''成绩录入'''
     def __init__(self, parent, root):
         super().__init__(parent)
-        label = tk.Label(self, text="这是课堂", font=LARGE_FONT)
+        label = tk.Label(self, text="这是成绩录入", font=LARGE_FONT)
         label.pack()
 
         button1 = ttk.Button(self, text="回到选课程", command=lambda: root.show_frame(StartPage)).pack()
@@ -308,7 +308,7 @@ class PageOne(tk.Frame):
         for val in TAGDICT[coursetype]:
             self.itemtext.insert( END, str(k)+','+str(val)+'\t\t')
             k += 1
-        self.cont.set('0522702')
+        self.cont.set('0512702')
         pass
     
     
@@ -320,6 +320,12 @@ class PageOne(tk.Frame):
         # get the multi marks from Entry 2.
         st = self.mark_ent.get()   #  multi marks split by ",".
         print( st)
+        backup = 'y'  #  input('Is this need backup?')
+        if backup.lower() == 'y':
+            memory_file = open('entry_backup.txt','a')
+            memory_file.write(fulllist[NUM]+'\n')
+            memory_file.write(st+'\n')
+            memory_file.close()
 
         # split each mark.
         mm = st.split(',')
@@ -350,10 +356,12 @@ class PageOne(tk.Frame):
             else:
                 print('数字位数不对。')
         pass
+        print( fulllist[NUM])
         print( itemnum)
         print( studnum)
         print( mark)
 
+        self.list_box.insert( 0, fulllist[NUM])
         # open the excel file.
         wb = openpyxl.load_workbook(fulllist[NUM])
         sheet = wb.get_active_sheet()
@@ -365,8 +373,8 @@ class PageOne(tk.Frame):
                     # Write
                     if itemnum[e] == 11:      # 课堂作业已做，说明来上课了。
                         sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课,1 is nomal, 2 means repeat write.
-                    dp = studnum[e] +':'+ str( sheet.cell(row = row,column = itemnum[e]).value)
-                    dp += '-'+ str( sheet.cell(row = row,column = 4).value)+'->'
+                    dp = str( sheet[ 'b'+str( row)].value) +':'+ '  ' + str( sheet.cell(row = row,column = itemnum[e]).value)
+                    dp1 = '  ' + str( sheet.cell(row = row,column = 4).value)+'->'
 ##                    self.list_box.insert( 0, dp+' ')                       # 显示加之前的分数
                     if mark[e][:1]=='0':
                         sheet.cell(row = row,column = itemnum[e]).value += int(mark[e][1:])        # 加上要加的分数
@@ -374,8 +382,9 @@ class PageOne(tk.Frame):
                     elif mark[e][:1]=='1':
                         sheet.cell(row = row,column = itemnum[e]).value -= int(mark[e][1:])    # 减去要减的分数
                         sheet.cell(row = row,column = 4).value -= int(mark[e][1:])          # 总分也减去该分数
-                    dp += str( sheet.cell( row = row,column = itemnum[e]).value)
-                    dp += '-'+ str( sheet.cell(row = row,column = 4).value)
+                    dp += '->'+ str( sheet.cell( row = row,column = itemnum[e]).value)
+                    dp1 += str( sheet.cell(row = row,column = 4).value)
+                    dp += dp1
                     self.list_box.insert( 0, dp+'  ')                     # 显示加之前加之后的分数   0  END
                     break
         pass
@@ -465,7 +474,7 @@ class PageTwo(tk.Frame):
         label.pack()
 
         button1 = ttk.Button(self, text="回到选课程", command=lambda: root.show_frame(StartPage)).pack()
-        button2 = ttk.Button(self, text="回到课堂", command=lambda: root.show_frame(PageOne)).pack()
+        button2 = ttk.Button(self, text="回到成绩录入", command=lambda: root.show_frame(PageOne)).pack()
 
 
         self.create_widgets()
