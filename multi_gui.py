@@ -24,7 +24,7 @@ from getdir import getdir, filesele, getfull
 # course
 COURSE_REG = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
 
-global contents             # global variable
+global CONTENTS             # global variable
 
 PERFORMANCE_TAG = [
     ['旷课',],
@@ -71,8 +71,8 @@ matplotlib.use("tkagg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 
-import tkinter as tk
-from tkinter import ttk
+##import tkinter as tk
+##from tkinter import ttk
 
 
 LARGE_FONT= ("Verdana", 12)
@@ -139,12 +139,12 @@ class StartPage(tk.Frame):
         # label.
         Label( self.mainframe, text = '所选课程').pack()
         
-        global contents             # global variable
-        contents = StringVar()
-        contents.set('用于显示所选择的课程.每页都相同。')        # set it to some value
+        global CONTENTS             # global variable
+        CONTENTS = StringVar()
+        CONTENTS.set('用于显示所选择的课程.每页都相同。')        # set it to some value
         
         # Entry.
-        self.course_ent = Entry( self.mainframe, width=85, textvariable = contents)
+        self.course_ent = Entry( self.mainframe, width=85, textvariable = CONTENTS)
         self.course_ent.pack()
 
         # "旷课者查询" button .
@@ -178,14 +178,14 @@ class StartPage(tk.Frame):
         if NUM > 0:
             # every click, NUM decrease 1. to select the next course.
             NUM -= 1       #  decrease must be place here.
-            contents.set( fulllist[NUM])
+            CONTENTS.set( fulllist[NUM])
             self.course.insert( 0, fulllist[NUM])
             
     def find_absent( self):
 
         global fulllist, NUM
         # Open the book.
-        col=19        # column 12 is "是否上交课堂作业"
+        col = 19        # column 19 is "是否上交课堂作业"
         wb = openpyxl.load_workbook( fulllist[NUM])
         sheet = wb.get_active_sheet()
         ab_stu = []
@@ -203,7 +203,7 @@ class StartPage(tk.Frame):
             if len( ab_stu)%5:
                 self.course.insert( 0, ab_stu[ 5*k+5:])
         pass
-        self.course.insert( 0, '旷课者：\n')
+        self.course.insert( 0, fulllist[NUM]+'  旷课者：\n')
 
     def ahead(self):
         
@@ -224,7 +224,7 @@ class StartPage(tk.Frame):
             # insert the ahead marks to text.
            self.course.insert( 0, str(marks[n])) #  self.course.insert( 0, str(marks[n])+'\n')
 
-        self.course.insert( 0, '前8名为：\n')
+        self.course.insert( 0, fulllist[NUM]+'  前8名为：\n')
         pass
     
     def clrlistbox(self):
@@ -257,18 +257,18 @@ class PageOne(tk.Frame):
         Label( self.mainframe, text = '所选课程').pack()
         
         # Entry 1.
-        self.course_ = Entry( self.mainframe, width=85, textvariable = contents)
+        self.course_ = Entry( self.mainframe, width=85, textvariable = CONTENTS)
         self.course_.pack()
 
         # "排名:" button .
-        Button(self.mainframe, text = "排名:", command = self.ahead).pack()
+        Button(self.mainframe, text = "排名:", command = self.rank).pack()
         
         # "显示" listbox.
         self.list_box = Listbox(self.mainframe, height=12, width=88)
         self.list_box.pack()
 
         # Create"清空列表框" button .
-        Button( self.mainframe, text = "清空列表框", command=self.clrlistbox).pack()
+        Button( self.mainframe, text = "清空排名－列表框", command=self.clrlistbox).pack()
         
         # "清除上次课堂作业上交记录" button .
         Button(self.mainframe, text = "清除上次课堂作业上交记录", command = self.clr_absent).pack()
@@ -295,7 +295,7 @@ class PageOne(tk.Frame):
         Button(self.mainframe, text = "旷课者查询", command = self.find_absent).pack()
 
         # Create"清空文本框" button .
-        Button( self.mainframe, text = "清空文本框", command=self.clrtext).pack()
+        Button( self.mainframe, text = "清空项目－文本框", command=self.clrtext).pack()
 
     def list_item(self):
         
@@ -372,7 +372,22 @@ class PageOne(tk.Frame):
                 if str( sheet[ 'b'+str( row)].value)[-3:] == studnum[e]:           #  学号在B列
                     # Write
                     if itemnum[e] == 11:      # 课堂作业已做，说明来上课了。
-                        sheet.cell(row=row,column=19).value += 1   # 上课记录，0表示缺课,1 is nomal, 2 means repeat write.
+                        if sheet.cell(row=row,column=19).value:
+                            re_in = input('已经记录了课堂作业成绩，还要增加记录吗？')
+                            if re_in == 'y':
+                                pass
+                            else:
+                                break
+                        sheet.cell(row=row,column=19).value += 1       # 上课记录，0表示缺课,1 is nomal, 2 means repeat write.
+                            
+                    elif sheet.cell(row = row,column = itemnum[e]).value:
+                        re_in = input('已经记录了作业成绩，还要记录吗？')
+                        if re_in == 'y':
+                            pass
+                        else:
+                            break
+                    else:
+                        pass
                     dp = str( sheet[ 'b'+str( row)].value) +':'+ '  ' + str( sheet.cell(row = row,column = itemnum[e]).value)
                     dp1 = '  ' + str( sheet.cell(row = row,column = 4).value)+'->'
 ##                    self.list_box.insert( 0, dp+' ')                       # 显示加之前的分数
@@ -400,7 +415,7 @@ class PageOne(tk.Frame):
         pass
 
     
-    def ahead(self):
+    def rank(self):
         
         global fulllist, NUM
         # Read the marks.
@@ -417,7 +432,7 @@ class PageOne(tk.Frame):
         for k in marks[:]:
             # insert the ahead marks to text.
             self.list_box.insert(0, str(k)+'\n')
-        self.list_box.insert(0, '排名为：\n')
+        self.list_box.insert(0, fulllist[NUM]+'  排名为：\n')
         pass
 
     def find_absent( self):
@@ -443,7 +458,7 @@ class PageOne(tk.Frame):
             if len( ab_stu)%5:
                 self.list_box.insert( 0, ab_stu[ 5*k+5:])
         pass
-        self.list_box.insert( 0, '旷课者：\n')
+        self.list_box.insert( 0, fulllist[NUM]+'  旷课者：\n')
 
 
     def clr_absent(self):
@@ -492,14 +507,14 @@ class PageTwo(tk.Frame):
         Label( self.mainframe, text = '所选课程').pack()
 
         # Entry.
-        self.course_ent = Entry( self.mainframe, width=85, textvariable = contents)
+        self.course_ent = Entry( self.mainframe, width=85, textvariable = CONTENTS)
         self.course_ent.pack()
 
         # "提示输入第几次作业" label .
         Label(self.mainframe, text = "请输入要查询第几次作业").pack()
 
         self.whichhw = StringVar()
-        self.whichhw.set('2')   # 2 means the second homework.
+        self.whichhw.set('3')   # 2 means the second homework.
         # Entry 3.
         self.homew_ent = Entry( self.mainframe, width=3, textvariable = self.whichhw)
         self.homew_ent.pack()
@@ -515,7 +530,7 @@ class PageTwo(tk.Frame):
         self.list_box.pack()
 
         # "排名:" button .
-        Button(self.mainframe, text = "排名:", command = self.ahead).pack()
+        Button(self.mainframe, text = "排名:", command = self.rank).pack()
         
 ##        # text.    # text display is not good as listbox
 ##        self.list_box = Text(self.mainframe, height=15, width=85, wrap='word')
@@ -555,7 +570,7 @@ class PageTwo(tk.Frame):
                 self.list_box.insert( 0, homework[ 5*k:5*k+5])
             if len( homework)%5:
                 self.list_box.insert( 0, homework[ 5*k+5:])
-        self.list_box.insert( 0, '第'+ which+'次作业 已做者：\n')        
+        self.list_box.insert( 0, fulllist[NUM]+'  第'+ which+'次作业 已做者：\n')        
         pass
 
         
@@ -602,14 +617,14 @@ class PageTwo(tk.Frame):
                 self.list_box.insert( 0, nohome[ 5*k:5*k+5])
             if len( nohome)%5:
                 self.list_box.insert( 0, nohome[ 5*k+5:])
-        self.list_box.insert( 0, '第'+ which+'次作业 未做者：\n')        
+        self.list_box.insert( 0, fulllist[NUM]+'  第'+ which+'次作业 未做者：\n')        
         pass
     
     def clrlistbox(self):
         self.list_box.delete( 0, END)
         pass
 
-    def ahead(self):
+    def rank(self):
         
         global fulllist, NUM
         # Read the marks.
@@ -626,7 +641,7 @@ class PageTwo(tk.Frame):
         for k in marks[:]:
             # insert the ahead marks to text.
             self.list_box.insert(0, str(k)+'\n')
-        self.list_box.insert(0, '排名为：\n')
+        self.list_box.insert(0, fulllist[NUM]+'  排名为：\n')
         pass
 
 
