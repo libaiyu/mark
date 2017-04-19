@@ -19,12 +19,12 @@ from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 
-from getdir import getdir, filesele, getfull
+from getdir import getdir, filesele, getfull, getbackup
 
 # course
 COURSE_REG = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
 
-global CONTENTS             # global variable
+global CONTENTS            # global variable
 
 PERFORMANCE_TAG = [
     ['旷课',],
@@ -322,9 +322,12 @@ class PageOne(tk.Frame):
         print( st)
         backup = 'y'  #  input('Is this need backup?')
         if backup.lower() == 'y':
-            memory_file = open('entry_backup.txt','a')
-            memory_file.write(fulllist[NUM]+'\n')
-            memory_file.write(st+'\n')
+            import datetime
+            global BACKUPFILE
+            memory_file = open( BACKUPFILE,'a')
+            memory_file.write( str( datetime.datetime.now())+'\n')
+            memory_file.write( fulllist[NUM]+'\n')
+            memory_file.write( st+'\n')
             memory_file.close()
 
         # split each mark.
@@ -657,9 +660,11 @@ class PageThree(tk.Frame):
 
 def getfile():
 
-    global fulllist, NUM
+    global fulllist, NUM, BACKUPFILE, f
+    
     # Get the directory name.
     DIRNAME = getdir()
+    BACKUPFILE = getbackup()
     # Get the filename list.
     FILELIST = os.listdir( DIRNAME)
     # Get the filename list include coursetype.
