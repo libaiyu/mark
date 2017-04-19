@@ -3,6 +3,7 @@
 
 def getdir():
     ''' '''
+    global f
     f = input('test(for testing) or work(for working):')
     FILE = 'd:\\_PythonWorks\\mark\\directory' + f + '.txt'
     try:
@@ -19,6 +20,13 @@ def getdir():
         print('We have got directory name', dirname, 'in', FILE, '\n')
         pass
     return dirname
+
+def getbackup():
+    ''' '''
+    
+    BACKUPFILE = f+'_entry_backup.txt'
+    return BACKUPFILE
+
 
 def filesele( filelist, regex):
     '''select the file name that according to the regular express.
@@ -97,8 +105,6 @@ def item_mark( file, st, num=3):
     
     wb = openpyxl.load_workbook( file)
     sheet = wb.get_active_sheet()
-    
-
     for colu in range( 1, sheet.max_column+1):
         # print( st)
         if sheet.cell( row=2, column=colu).value == st:
@@ -119,9 +125,13 @@ def item_mark( file, st, num=3):
 
 
 def main():
+
     # Get the directory name.
     DIRNAME = getdir()
     print( DIRNAME)
+    input('debug')
+    BACKUPFILE = getbackup()
+    print( BACKUPFILE)
     input('debug')
     import os
     # Get the filename list.
