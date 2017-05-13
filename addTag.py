@@ -8,7 +8,7 @@ import os
 import re
 import logging
 
-import getdir        #  2017-3-22 
+from getdir import getdir        #  2017-3-22,  2017-5-13
 
 # logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
@@ -67,7 +67,7 @@ tagdict = {'performance':performance_tag,
            'design':design_tag,
            'practice':practice_tag}
 
-dirname = getdir.getdir()        #  2017-3-22
+dirname = getdir()        #  2017-3-22,  2017-5-13
 
 # open files one by one
 count = 0
