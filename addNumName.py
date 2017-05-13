@@ -11,7 +11,7 @@ import os
 import re
 import logging
 
-import getdir       # 2017-3-22
+from getdir import getdir    # 2017-3-22
 
 # logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
@@ -41,7 +41,7 @@ regex = re.compile('(\w+)-(\d+)(-\d)?|(\w+)-([a-z]+)-(\d+)(-\d)?')   #  使用�
 ### find the course
 ##courseReg = re.compile(r'-([a-z]{3,11})-')
 
-dirname = getdir.getdir()       # 2017-3-22
+dirname = getdir()       # 2017-3-22
 
 stud_dict = {}
 
