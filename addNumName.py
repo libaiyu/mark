@@ -11,7 +11,7 @@ import os
 import re
 import logging
 
-from getdir import getdir    # 2017-3-22
+from getdir import getdir    # 2017-3-22,  2017-5-13
 
 # logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
 logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
@@ -41,7 +41,7 @@ regex = re.compile('(\w+)-(\d+)(-\d)?|(\w+)-([a-z]+)-(\d+)(-\d)?')   #  使用�
 ### find the course
 ##courseReg = re.compile(r'-([a-z]{3,11})-')
 
-dirname = getdir()       # 2017-3-22
+dirname = getdir()       # 2017-3-22,  2017-5-13
 
 stud_dict = {}
 
@@ -84,7 +84,8 @@ for file in os.listdir(dirname):
                 students[3].append(65)         #  初始分设定为65
         # prepare dict for a new className
         stud_dict[ className] = students
-
+        
+print()
 # write the number and name of the students to the new files that will note the mark for students.
 count = 0
 for file in matchlist:
@@ -110,7 +111,7 @@ for file in matchlist:
             col +=1
         wb.save( fullname)
         count += 1
-        print('File for class: %s have been written! Total %d files.' % ( className, count))
+        print('%s have been added Number and name!\nFile %d .' % (file, count))
 
 logging.critical('-------End--------')
 

@@ -12,16 +12,20 @@ It can be run arbitrary.                   2017-3-16  22:10
 增加查询作业上交情况前的输入提示    2017-3-28
 ''' 
 
-import openpyxl
 import os
 import re
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 
+import openpyxl
+import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
+
 from getdir import getdir, filesele, getfull, getbackup
 
-# course
+# course type
 COURSE_REG = re.compile(r'-([a-z]{3,11})-')     # 2017-3-4 debug.
 
 global CONTENTS            # global variable
@@ -64,15 +68,14 @@ TAGDICT = {'performance':PERFORMANCE_TAG,
            'design':DESIGN_TAG,
            'practice':PRACTICE_TAG}
 
-
-import matplotlib
-matplotlib.use("tkagg")
-
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
-
 ##import tkinter as tk
 ##from tkinter import ttk
+
+##import matplotlib
+matplotlib.use("tkagg")
+
+##from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+##from matplotlib.figure import Figure
 
 
 LARGE_FONT= ("Verdana", 12)
@@ -102,7 +105,6 @@ class Application(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")  # 四个页面的位置都是 grid(row=0, column=0), 位置重叠！！
 
         self.show_frame(StartPage)
-
         
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -120,7 +122,6 @@ class StartPage(tk.Frame):
         button2 = ttk.Button(self, text="去到成绩录入", command=lambda: root.show_frame(PageOne)).pack()
 ##        button3 = ttk.Button(self, text="去到其他", command=lambda: root.show_frame(PageThree)).pack()
 
-
         self.create_widgets()
 
     def create_widgets(self):
@@ -131,7 +132,6 @@ class StartPage(tk.Frame):
         self.mainframe.pack()
         self.mainframe.columnconfigure(0, weight=1)
         self.mainframe.rowconfigure(0, weight=1)
-
 
         # Create"选择课程" button .
         Button( self.mainframe, text = "选择课程", command=self.sele_course).pack()
@@ -230,6 +230,7 @@ class StartPage(tk.Frame):
     def clrlistbox(self):
         self.course.delete(0, END)
         pass
+    
 
 class PageOne(tk.Frame):
     '''成绩录入'''
@@ -240,7 +241,6 @@ class PageOne(tk.Frame):
 
         button1 = ttk.Button(self, text="回到选课程", command=lambda: root.show_frame(StartPage)).pack()
         button2 = ttk.Button(self, text="去到课后", command=lambda: root.show_frame(PageTwo)).pack()
-
 
         self.create_widgets()
 
@@ -311,7 +311,6 @@ class PageOne(tk.Frame):
         self.cont.set('0512702')
         pass
     
-    
     def markin( self, event):    #    event.??    ok.   17-3-15.
         # mark update.
         
@@ -324,8 +323,9 @@ class PageOne(tk.Frame):
         if backup.lower() == 'y':
             import datetime
             global BACKUPFILE
+            t = datetime.datetime.now()
             memory_file = open( BACKUPFILE,'a')
-            memory_file.write( str( datetime.datetime.now())+'\n')
+            memory_file.write( str( t.year)+'-'+str( t.month)+'-'+str( t.day)+','+str( t.hour)+':'+str( t.minute)+':'+str( t.second)+'\n')
             memory_file.write( fulllist[NUM]+'\n')
             memory_file.write( st+'\n')
             memory_file.close()
@@ -416,7 +416,6 @@ class PageOne(tk.Frame):
             else:
                 break
         pass
-
     
     def rank(self):
         
@@ -463,7 +462,6 @@ class PageOne(tk.Frame):
         pass
         self.list_box.insert( 0, fulllist[NUM]+'  旷课者：\n')
 
-
     def clr_absent(self):
 
         global fulllist, NUM
@@ -493,7 +491,6 @@ class PageTwo(tk.Frame):
 
         button1 = ttk.Button(self, text="回到选课程", command=lambda: root.show_frame(StartPage)).pack()
         button2 = ttk.Button(self, text="回到成绩录入", command=lambda: root.show_frame(PageOne)).pack()
-
 
         self.create_widgets()
 
@@ -575,7 +572,6 @@ class PageTwo(tk.Frame):
                 self.list_box.insert( 0, homework[ 5*k+5:])
         self.list_box.insert( 0, fulllist[NUM]+'  第'+ which+'次作业 已做者：\n')        
         pass
-
         
     def nohomework( self):
 
@@ -655,7 +651,6 @@ class PageThree(tk.Frame):
         tk.Label(self, text="这是其他", font=LARGE_FONT).pack()
 
         button1 = ttk.Button(self, text="回到选课程", command=lambda: root.show_frame(StartPage)).pack()
-
 
 
 def getfile():

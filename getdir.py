@@ -1,11 +1,14 @@
 #! python3
 # Get the directory name in this module.
+import os
 
 def getdir():
     ''' '''
     global f
     f = input('test(for testing) or work(for working):')
-    FILE = 'd:\\_PythonWorks\\mark\\directory' + f + '.txt'
+    dirn = os.getcwd()
+    FILE = dirn+'\\directory' + f + '.txt'
+##    FILE = 'd:\\_PythonWorks\\mark\\directory' + f + '.txt'
     try:
         dirname = open(FILE).read()
     except IOError:
@@ -133,7 +136,7 @@ def main():
     BACKUPFILE = getbackup()
     print( BACKUPFILE)
     input('debug')
-    import os
+##    import os
     # Get the filename list.
     FILELIST = os.listdir( DIRNAME)
     k = 0
