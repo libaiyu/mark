@@ -1,0 +1,26 @@
+
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0512702,111,222,10101,131,11503,121
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0512702,111,222,10101,131,11503,121
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0812702,111,222,10101,131,11503,121
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0812702,111,222,10101,131,11503,121
+
+test 11:17 2017/4/19
+
+
+
+2017-04-19 23:40:39.424430
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0512702
+2017-04-19 23:41:03.375800
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0511702
+2017,4,20,7,20,41,
+d:\_PythonWorks\mark\excelfiles\电路分析-performance-1621401-2-test.xlsx
+0512702
+2017-4-20,7:22:50,
+d:\_PythonWorks\mark\excelfiles\模拟电子技术-performance-1523701-test.xlsx
+0512702
