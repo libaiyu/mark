@@ -151,24 +151,40 @@ class StartPage(tk.Frame):
         Button(self.mainframe, text = "旷课者查询", command = self.find_absent).pack()
 
         # Create listbox.
-        self.course =  Listbox(self.mainframe, width=85, height=15)
-        self.course.pack()
+        self.listbox =  Listbox(self.mainframe, width=85, height=15)
+        self.listbox.pack()
 
         # "前8名:" button .
         Button(self.mainframe, text = "前8名:", command = self.ahead).pack()
 
         # Create"列出课程" button .
         Button( self.mainframe, text = "列出课程", command=self.listfile).pack()
+        
+        # '输入分数' label.
+        Label( self.mainframe, text = '输入学号后3位。').pack()
+        
+        self.cont = StringVar()
+        self.cont.set('请输入学号后3位：')   # set it to some value
+        # Entry 2.
+        self.look_ent = Entry( self.mainframe, width=85, textvariable = self.cont)
+        self.look_ent.pack()
+        self.look_ent["textvariable"] = self.cont    # tell the entry widget to watch this variable
+        self.look_ent.bind('<Key-Return>', self.lookmark)  # when the user hits return
 
+        # "旷课者查询" button .
+        Button(self.mainframe, text = "旷课者查询", command = self.find_absent).pack()
+        
         # Create"清空列表框" button .
         Button( self.mainframe, text = "清空列表框", command=self.clrlistbox).pack()
 
     def listfile(self):     #  "列出课程"
         
         global fulllist
-##        self.course.delete( 0, END)
+##        self.listbox.delete( 0, END)
+        self.listbox.insert( 0, '\n')
         for coursen in fulllist:
-            self.course.insert( 0, coursen)
+            self.listbox.insert( 0, coursen)
+        self.listbox.insert( 0, '\n')
 
     def sele_course(self):    # "选择课程"
         
@@ -179,7 +195,7 @@ class StartPage(tk.Frame):
             # every click, NUM decrease 1. to select the next course.
             NUM -= 1       #  decrease must be place here.
             CONTENTS.set( fulllist[NUM])
-            self.course.insert( 0, fulllist[NUM])
+            self.listbox.insert( 0, fulllist[NUM])
             
     def find_absent( self):
 
@@ -194,16 +210,16 @@ class StartPage(tk.Frame):
                 ab_stu.append( sheet[ 'b'+str( row)].value)
         wb.save( fulllist[NUM])
         
-        # self.course.delete( 0, END)
+        # self.listbox.delete( 0, END)
         if len( ab_stu)<5:   # len( ab_stu) = 0 时，会插入一个空列，感觉比什么都没有更踏实。
-            self.course.insert( 0, ab_stu)
+            self.listbox.insert( 0, ab_stu)
         else:    #   len( ab_stu)>=5
             for k in range( len( ab_stu)//5):
-                self.course.insert( 0, ab_stu[ 5*k:5*k+5])
+                self.listbox.insert( 0, ab_stu[ 5*k:5*k+5])
             if len( ab_stu)%5:
-                self.course.insert( 0, ab_stu[ 5*k+5:])
+                self.listbox.insert( 0, ab_stu[ 5*k+5:])
         pass
-        self.course.insert( 0, fulllist[NUM]+'  旷课者：\n')
+        self.listbox.insert( 0, fulllist[NUM]+'  旷课者：\n')
 
     def ahead(self):
         
@@ -217,18 +233,85 @@ class StartPage(tk.Frame):
         wb.save( fulllist[NUM])
         
         # self.list_box.delete(1.0, END)
-##        self.course.insert( 0, '前8名为：\n')
+##        self.listbox.insert( 0, '前8名为：\n')
         # rank the marks.
         marks.sort(reverse=True)
         for n in range( len( marks[:8])-1, -1, -1):
             # insert the ahead marks to text.
-           self.course.insert( 0, str(marks[n])) #  self.course.insert( 0, str(marks[n])+'\n')
+           self.listbox.insert( 0, str(marks[n])) #  self.listbox.insert( 0, str(marks[n])+'\n')
 
-        self.course.insert( 0, fulllist[NUM]+'  前8名为：\n')
+        self.listbox.insert( 0, fulllist[NUM]+'  前8名为：\n')
+        pass
+
+    def lookmark( self, event):
+        
+        global fulllist, NUM
+
+        # Read the Entry. Then backup.
+        st = self.look_ent.get()   #  multi student number split by ",".
+        print( st)
+        backup = 'y'  #  input('Is this need backup?')
+        if backup.lower() == 'y':
+            import datetime
+            global BACKUPFILE
+            t = datetime.datetime.now()
+            memory_file = open( BACKUPFILE,'a')
+            memory_file.write( str( t.year)+'-'+str( t.month)+'-'+str( t.day)+','+str( t.hour)+':'+str( t.minute)+':'+str( t.second)+'\n')
+            memory_file.write( fulllist[NUM]+'\n')
+            memory_file.write( st+'\n')
+            memory_file.close()
+
+        # Split each student number. Form the students' number list.
+        mm = st.split(',')
+        # get the studnum
+        studnum = []
+        for e in range(len(mm)):
+            if not mm[e].isdigit():    # each student number should be digit.
+                break                  # till it is not digit, break.
+
+            if len(mm[e]) == 3:          # student number.
+##                print(mm[e],type(mm[e]))
+                studnum.append( mm[e])
+                class_temp = mm[e][0]
+            elif len(mm[e]) == 2:        # student number.
+                mmm = class_temp + mm[e]
+                studnum.append( mmm)
+            else:
+                print('数字位数不对。')
+        pass
+        print( fulllist[NUM])
+        print( studnum)
+
+        self.listbox.insert( 0, fulllist[NUM])
+        # open the excel file.
+        wb = openpyxl.load_workbook(fulllist[NUM])
+        sheet = wb.get_active_sheet()
+        # Read the mark
+        result = []
+        # Read the title
+        row_title = []
+        for col in range( 2, sheet.max_column+1):
+            row_title.append( sheet.cell( row=2, column=col).value)
+        result.append( row_title)
+
+        # Read the marks.
+        for e in range(len(studnum)):
+            for row in range(3,sheet.max_row + 1):
+                if str( sheet[ 'b'+str( row)].value)[-3:] == studnum[e]:           #  学号在B列
+                    # Look up the mark.
+                    row_m = []
+                    for col in range( 2, sheet.max_column+1):
+                        row_m.append( sheet.cell( row=row, column=col).value)
+                    result.append( row_m)
+                    break
+        print( result)
+        for each in result:
+            self.listbox.insert( 0, each)
+
         pass
     
     def clrlistbox(self):
-        self.course.delete(0, END)
+        self.listbox.delete(0, END)
         pass
     
 
@@ -340,13 +423,19 @@ class PageOne(tk.Frame):
             if not mm[e].isdigit():    # each mark should be digit. if so, it will write in.
                 break                  # till mark is not digit, break.
 
-            if len(mm[e]) == 7:          # item, student number, mark.
+            if len(mm[e]) == 7:          # item, student number(3 digits), mark.
 ##                print(mm[e],type(mm[e]))
                 ittemp = 6 + int( mm[e][:2])
                 itemnum.append( ittemp)
                 studnum.append( mm[e][2:5])
                 marktemp = mm[e][5:]
                 mark.append( marktemp)
+##            if len(mm[e]) == 6:          # item, student number(2 digits), mark.
+##                ittemp = 6 + int( mm[e][:2])
+##                itemnum.append( ittemp)
+##                studnum.append( mm[e][2:4])
+##                marktemp = mm[e][4:]
+##                mark.append( marktemp)
             elif len(mm[e]) == 5:        # item no change, student number change, mark change.
                 itemnum.append( ittemp)   # item no change.
                 studnum.append( mm[e][:3])

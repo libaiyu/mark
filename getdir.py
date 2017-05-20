@@ -125,6 +125,24 @@ def item_mark( file, st, num=3):
         prank( marks, num)
     wb.save( file)
     
+def getfile():
+
+    # Get the directory name.
+    DIRNAME = getdir()
+    BACKUPFILE = getbackup()
+    # Get the filename list.
+    FILELIST = os.listdir( DIRNAME)
+    # Get the filename list include coursetype
+    
+    import re
+    course_reg = re.compile(r'-([a-z]{3,11})-')
+    filelist = filesele( FILELIST, course_reg)
+    # sort the filelist. so the index of the file is nochange.
+    filelist.sort()       
+    # File full name list.
+    fulllist = getfull( DIRNAME, filelist)
+    
+    return fulllist
 
 
 def main():
@@ -162,4 +180,6 @@ def main():
     
 
 if __name__ == '__main__':
+    getfile()
+    input('-----------')
     main()
