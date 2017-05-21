@@ -3,20 +3,23 @@
 import os
 
 def getdir():
-    ''' '''
+    ''' Get the directory path. If for test, the directory path will read from a test.txt.
+
+If for work, the directory paht will read from a work.txt.
+'''
+    
     global f
     f = input('test(for testing) or work(for working):')
     dirn = os.getcwd()
-    FILE = dirn+'\\directory' + f + '.txt'
-##    FILE = 'd:\\_PythonWorks\\mark\\directory' + f + '.txt'
+    FILE = dirn+'\\directory' + f + '.txt'  ##    FILE = 'd:\\_PythonWorks\\mark\\directory' + f + '.txt'
     try:
         dirname = open(FILE).read()
     except IOError:
         print('No such filename.')
         dirname = input('Please input the directory name:')
-        f = open( FILE, 'w')
-        f.write(dirname)
-        f.close()
+        file = open( FILE, 'w')
+        file.write( dirname)
+        file.close()
         print('Directory name has been written in ', FILE)
         pass
     else:
@@ -25,10 +28,11 @@ def getdir():
     return dirname
 
 def getbackup():
-    ''' '''
+    ''' Get the file name that used to backup the content of entry.
+'''
     
-    BACKUPFILE = f+'_entry_backup.txt'
-    return BACKUPFILE
+    backupfile = f+'_entry_backup.txt'
+    return backupfile
 
 
 def filesele( filelist, regex):
@@ -43,7 +47,8 @@ def filesele( filelist, regex):
     return fileselect
 
 def getfull( dirname, filelist):
-    ''' '''
+    ''' Form the list of full name.
+'''
     full_list = []
     for file in filelist:
         fullname = dirname + '\\' + file
@@ -84,6 +89,7 @@ def prank( marks, num):
 def pfrank( file, num):
     '''print the students' mark according to given number.
     '''
+    
     import openpyxl
     wb = openpyxl.load_workbook( file)
     sheet = wb.get_active_sheet()
@@ -102,6 +108,7 @@ def pfrank( file, num):
 def item_mark( file, st, num=3):
     '''print students' number and name whose item is zero.
     '''
+    
     import openpyxl
     
     no_flag = 0    #   no found flag = 0

@@ -197,7 +197,7 @@ class StartPage(tk.Frame):
             CONTENTS.set( fulllist[NUM])
             self.listbox.insert( 0, fulllist[NUM])
             
-    def find_absent( self):
+    def find_absent( self):  # 找出旷课者
 
         global fulllist, NUM
         # Open the book.
@@ -221,7 +221,7 @@ class StartPage(tk.Frame):
         pass
         self.listbox.insert( 0, fulllist[NUM]+'  旷课者：\n')
 
-    def ahead(self):
+    def ahead(self):   # display the ahead 8 marks.
         
         global fulllist, NUM
         # Read the marks.
@@ -244,6 +244,7 @@ class StartPage(tk.Frame):
         pass
 
     def lookmark( self, event):
+        ''' Look up the marks of given students' numbers.  '''
         
         global fulllist, NUM
 
@@ -256,7 +257,7 @@ class StartPage(tk.Frame):
             global BACKUPFILE
             t = datetime.datetime.now()
             memory_file = open( BACKUPFILE,'a')
-            memory_file.write( str( t.year)+'-'+str( t.month)+'-'+str( t.day)+','+str( t.hour)+':'+str( t.minute)+':'+str( t.second)+'\n')
+            memory_file.write( '\n'+str( t.year)+'-'+str( t.month)+'-'+str( t.day)+','+str( t.hour)+':'+str( t.minute)+':'+str( t.second)+'\n')
             memory_file.write( fulllist[NUM]+'\n')
             memory_file.write( st+'\n')
             memory_file.close()
@@ -762,6 +763,7 @@ def getfile():
 ##def clrlistbox( box):
 ##    box.delete(0, END)
 ##    pass
+    
 
 if __name__ == '__main__':  #  __main__ is not correct.
 
