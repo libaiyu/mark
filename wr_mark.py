@@ -1,12 +1,12 @@
 #! python3
-# Put the final_mark into the excel file.
+# Put the mark into the excel file.
 
 import os
 import datetime
 import openpyxl
 from getdir import getdir, filesele, getfull, getbackup, getfile  # Get the directory name in this module.
 
-itemnum = 22    # Final mark in column 22
+itemnum = 22    # mark in column 22
 studnum = []
 mark = []
 
@@ -18,6 +18,7 @@ def backup( content):
     memory_file = open( backupfile, 'a')
     memory_file.write( '\n'+content+'\n')
     memory_file.close()
+
 
 def get_ex_file():
     ''' List all the excel files that record marks.
@@ -34,7 +35,8 @@ then select the file that will be used this time.
     
     return excel_file[ filenum]
 
-def get_f_mark():
+
+def get_mark():
     ''' Get the multi marks from input.
 
 11189 means the last three digits of students' number is 111, mark is 89.
@@ -47,7 +49,6 @@ def get_f_mark():
     # split each mark.
     mm = st.split(',')
     # get the studnum, mark list.
-
 
     for e in range(len(mm)):
         if not mm[e].isdigit():    # each mark should be digit. if so, it will write in.
@@ -80,8 +81,9 @@ def get_f_mark():
 
     return None
 
+
 def write_in( sele_file):
-    ''' Write the final_mark in the excel file.
+    ''' Write the mark in the excel file.
 '''
 
     # open the excel file.
@@ -107,8 +109,9 @@ def write_in( sele_file):
             break
     pass
 
-def final_mark_in():
-    ''' Put the final_mark into the excel file.
+
+def wr_mark():
+    ''' Put the mark into the excel file.
 '''
     
     # Get the excel file.
@@ -120,14 +123,16 @@ def final_mark_in():
     detail_time = '\n'+str( t.year)+'-'+str( t.month)+'-'+str( t.day)+','+str( t.hour)+':'+str( t.minute)+':'+str( t.second)
     backup( detail_time)    
 
-    # Get the final mark.
-    get_f_mark()
+    # Get the mark.
+    get_mark()
 
-    # Write the final_mark into the open excel file.
+    # Write the mark into the open excel file.
     write_in( sele_file)
     
         
 if __name__ == '__main__':
-    final_mark_in()
+    wr_mark()
+
+
 
 

@@ -249,7 +249,7 @@ class StartPage(tk.Frame):
         global fulllist, NUM
 
         # Read the Entry. Then backup.
-        st = self.look_ent.get()   #  multi student number split by ",".
+        st = self.look_ent.get()   #  multi students' number split by ",".
         print( st)
         backup = 'y'  #  input('Is this need backup?')
         if backup.lower() == 'y':
@@ -305,10 +305,10 @@ class StartPage(tk.Frame):
                         row_m.append( sheet.cell( row=row, column=col).value)
                     result.append( row_m)
                     break
+        # Output the mark.
         print( result)
         for each in result:
             self.listbox.insert( 0, each)
-
         pass
     
     def clrlistbox(self):
