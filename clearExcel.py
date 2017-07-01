@@ -3,18 +3,13 @@
 ''' Attention: this will damage all xlsx files' data   2017-2
 Add the file name prompt and need comfirm to clear the file.  2017-3-22
 
-''' 
- 
+'''
+
 import openpyxl
 import os
 import re
-import logging
 
 from getdir import getdir   # 2017-3-22,  2017-5-13
-
-# logging.basicConfig( level = logging.DEBUG, format = ' %(asctime)s - %(levelname)s - %(message)s' )
-logging.basicConfig( level = logging.ERROR, format = ' %(asctime)s - %(levelname)s - %(message)s' )
-logging.critical('--------Start of program---------')
 
 
 do = input("Attention: this will damage all xlsx files' data.\n y for clear:")
@@ -31,12 +26,10 @@ if do == 'y':
     count = 0
     for fileName in os.listdir(dirname):
         if excelReg.search(fileName):
-            if ChineseReg.search(fileName) == None:
+            if ChineseReg.search(fileName) is None:
                 print('file %s   will be cleared!' % (fileName))
                 input('anykey to continue.')
                 wb.save(dirname + '\\' + fileName)
                 count += 1
                 print('file %s   is clear!\n' % (fileName))
     print('total %d files is clear!' % (count))
-
-logging.critical('-------End--------')
