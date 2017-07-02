@@ -79,7 +79,6 @@ LARGE_FONT = ("Verdana", 12)
 
 def backup_entry(ent_content):
     ''' '''
-##    global BACKUPFILE
     t = datetime.datetime.now()
     memory_file = open(BACKUPFILE, 'a')
     memory_file.write('\n' + str(t.year) + '-' + str(t.month) + '-' +
@@ -99,7 +98,6 @@ def process_entry(ent_content):
     for each_num in stud_num:
         if not each_num.isdigit():    # each student number should be digit.
             break                  # till it is not digit, break.
-
         if len(each_num) == 3:          # student number.
             # print(stud_num[e],type(stud_num[e]))
             student_number.append(each_num)
@@ -126,7 +124,6 @@ def get_num_mark(stud_num):
     for col in range(2, sheet.max_column+1):
         row_title.append(sheet.cell(row=2, column=col).value)
     num_mark.append(row_title)
-
     # Read the marks.
     for each_num in stud_num:
         for row in range(3, sheet.max_row + 1):
@@ -262,8 +259,8 @@ class StartPage(tk.Frame):
         Button(self.mainframe, text="列出课程", command=self.listfile).pack()
 
 
-    def listfile(self):     # "列出课程"
-        
+    def listfile(self):
+        '''列出课程'''
         global fulllist
         # self.listbox.delete(0, END)
         self.listbox.insert(0, '\n')
@@ -271,8 +268,8 @@ class StartPage(tk.Frame):
             self.listbox.insert(0, coursen)
         self.listbox.insert(0, '\n')
 
-    def sele_course(self):    # "选择课程"
-        
+    def sele_course(self):
+        '''选择课程'''
         global fulllist, NUM
         if NUM <= 0:
             NUM = len(fulllist)
@@ -282,8 +279,8 @@ class StartPage(tk.Frame):
             CONTENTS.set(fulllist[NUM])
             self.listbox.insert(0, fulllist[NUM])
             
-    def disp_absent(self):  # 找出旷课者
-        '''  '''
+    def disp_absent(self):
+        '''找出旷课者  '''
         global fulllist, NUM
         # find the absent students' number.
         absent_student = find_absent()
@@ -299,8 +296,8 @@ class StartPage(tk.Frame):
                 self.listbox.insert(0, absent_student[5*k+5:])
         self.listbox.insert(0, fulllist[NUM]+'  旷课者：\n')
 
-    def ahead(self):   # display the ahead 8 marks.
-        
+    def ahead(self):
+        '''display the ahead 8 marks.'''
         global fulllist, NUM
         # Read the marks.
         file = fulllist[NUM]
@@ -311,15 +308,11 @@ class StartPage(tk.Frame):
             # insert the ahead marks to text.
             self.listbox.insert(0, str(ahead_marks[num]))
             # self.listbox.insert(0, str(ahead_marks[num])+'\n')
-
         self.listbox.insert(0, fulllist[NUM]+'  前8名为：\n')
-        pass
 
     def lookmark(self, event):
         ''' Look up the marks of given students' numbers.  '''
-        
         global fulllist, NUM
-
         # Read the Entry. Then backup.
         entry_content = self.look_ent.get()   # multi students' number split by ",".
         print(entry_content)
@@ -333,11 +326,9 @@ class StartPage(tk.Frame):
         self.listbox.insert(0, fulllist[NUM])
         for each in num_marks:
             self.listbox.insert(0, each)
-        pass
     
     def clrlistbox(self):
         self.listbox.delete(0, END)
-        pass
 
 
 class PageOne(tk.Frame):
@@ -408,9 +399,8 @@ class PageOne(tk.Frame):
         Button(self.mainframe, text="清空项目－文本框", command=self.clrtext).pack()
 
     def list_item(self):
-        
+        '''加减分项目 '''
         global fulllist, NUM
-        
         # list the item according to the coursetpye.
         # self.itemtext.delete(0, END) # self.listbox.delete(0.0, END)
         coursetype = COURSE_REG.search(fulllist[NUM]).group(1)
@@ -419,64 +409,51 @@ class PageOne(tk.Frame):
             self.itemtext.insert(END, str(k)+','+str(val)+'\t\t')
             k += 1
         self.cont.set('0310701')
-        pass
     
     def markin(self, event):    # event.??    ok.   17-3-15.
-        # mark update.
-        
+        '''Mark update. Get the multi marks from Entry 2.'''
         global fulllist, NUM
-
-        # get the multi marks from Entry 2.
-        st = self.mark_ent.get()   # multi marks split by ",".
-        print(st)
-        backup = 'y'  # input('Is this need backup?')
-        if backup.lower() == 'y':
-            import datetime
-            global BACKUPFILE
-            t = datetime.datetime.now()
-            memory_file = open(BACKUPFILE, 'a')
-            memory_file.write(str(t.year) + '-' + str(t.month) + '-' +
-                              str(t.day) + ',' + str(t.hour) + ':' +
-                              str(t.minute) + ':' + str(t.second) + '\n')
-            memory_file.write(fulllist[NUM]+'\n')
-            memory_file.write(st+'\n')
-            memory_file.close()
+        # Read the Entry.
+        entry_content = self.mark_ent.get()   # multi students' number split by ",".
+        print(entry_content)
+        # backup the entry.  ------------
+        backup_entry(entry_content)
 
         # split each mark.
-        mm = st.split(',')
+        item_num_mark = entry_content.split(',')
         # get the itemnum, studnum, mark list.
         itemnum = []
         studnum = []
         mark = []
-        for e in range(len(mm)):
-            if not mm[e].isdigit():
+        for e in range(len(item_num_mark)):
+            if not item_num_mark[e].isdigit():
                 # each mark should be digit. if so, it will write in.
                 break                  # till mark is not digit, break.
 
-            if len(mm[e]) == 7:
+            if len(item_num_mark[e]) == 7:
                 # item, student number(3 digits), mark.
-                # print(mm[e], type(mm[e]))
-                ittemp = 3 + int(mm[e][:2])
+                # print(item_num_mark[e], type(item_num_mark[e]))
+                ittemp = 3 + int(item_num_mark[e][:2])
                 itemnum.append(ittemp)
-                studnum.append(mm[e][2:5])
-                marktemp = mm[e][5:]
+                studnum.append(item_num_mark[e][2:5])
+                marktemp = item_num_mark[e][5:]
                 mark.append(marktemp)
-# #            if len(mm[e]) == 6:          # item, student number(2 digits), mark.
-# #                ittemp = 3 + int(mm[e][:2])
+# #            if len(item_num_mark[e]) == 6:          # item, student number(2 digits), mark.
+# #                ittemp = 3 + int(item_num_mark[e][:2])
 # #                itemnum.append(ittemp)
-# #                studnum.append(mm[e][2:4])
-# #                marktemp = mm[e][4:]
+# #                studnum.append(item_num_mark[e][2:4])
+# #                marktemp = item_num_mark[e][4:]
 # #                mark.append(marktemp)
-            elif len(mm[e]) == 5:
+            elif len(item_num_mark[e]) == 5:
                 # item no change, student number change, mark change.
                 itemnum.append(ittemp)   # item no change.
-                studnum.append(mm[e][:3])
-                marktemp = mm[e][3:]
+                studnum.append(item_num_mark[e][:3])
+                marktemp = item_num_mark[e][3:]
                 mark.append(marktemp)
-            elif len(mm[e]) == 3:
+            elif len(item_num_mark[e]) == 3:
                 # item no change, student number change, mark no change.
                 itemnum.append(ittemp)
-                studnum.append(mm[e])
+                studnum.append(item_num_mark[e])
                 mark.append(marktemp)   # mark no change.
             else:
                 print('数字位数不对。')
