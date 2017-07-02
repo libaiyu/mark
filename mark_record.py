@@ -18,6 +18,7 @@ import re
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
+import datetime
 
 import openpyxl
 import matplotlib
@@ -74,6 +75,71 @@ MARK_SUM = 3  # MARK_SUM means　总成绩
 
 matplotlib.use("tkagg")
 LARGE_FONT = ("Verdana", 12)
+
+
+def backup_entry(ent_content):
+    ''' '''
+##    global BACKUPFILE
+    t = datetime.datetime.now()
+    memory_file = open(BACKUPFILE, 'a')
+    memory_file.write('\n' + str(t.year) + '-' + str(t.month) + '-' +
+                      str(t.day) + ',' + str(t.hour) + ':' +
+                      str(t.minute) + ':' + str(t.second) + '\n')
+    memory_file.write(fulllist[NUM]+'\n')
+    memory_file.write(ent_content+'\n')
+    memory_file.close()
+
+
+def process_entry(ent_content):
+    ''' '''
+    # Split each student number. Form the students' number list.
+    stud_num = ent_content.split(',')
+    # get the student_number
+    student_number = []
+    for each_num in stud_num:
+        if not each_num.isdigit():    # each student number should be digit.
+            break                  # till it is not digit, break.
+
+        if len(each_num) == 3:          # student number.
+            # print(stud_num[e],type(stud_num[e]))
+            student_number.append(each_num)
+            class_temp = each_num[0]
+        elif len(each_num) == 2:        # student number.
+            stud_number = class_temp + each_num
+            student_number.append(stud_number)
+        else:
+            print('数字位数不对。')
+    print(fulllist[NUM])
+    print(student_number)
+    return student_number
+
+
+def get_num_mark(stud_num):
+    ''' '''
+    # open the excel file.
+    wb = openpyxl.load_workbook(fulllist[NUM])
+    sheet = wb.get_active_sheet()
+    # Read the mark
+    num_mark = []
+    # Read the title
+    row_title = []
+    for col in range(2, sheet.max_column+1):
+        row_title.append(sheet.cell(row=2, column=col).value)
+    num_mark.append(row_title)
+
+    # Read the marks.
+    for each_num in stud_num:
+        for row in range(3, sheet.max_row + 1):
+            if str(sheet['A'+str(row)].value)[-3:] == each_num:  # 学号在A列
+                # Look up the mark.
+                row_mark = []
+                for col in range(2, sheet.max_column+1):
+                    row_mark.append(sheet.cell(row=row, column=col).value)
+                num_mark.append(row_mark)
+                break
+    # Output the mark.
+    print(num_mark)
+    return num_mark
 
 
 def find_absent():
@@ -255,67 +321,17 @@ class StartPage(tk.Frame):
         global fulllist, NUM
 
         # Read the Entry. Then backup.
-        st = self.look_ent.get()   # multi students' number split by ",".
-        print(st)
-        backup = 'y'  # input('Is this need backup?')
-        if backup.lower() == 'y':
-            import datetime
-            global BACKUPFILE
-            t = datetime.datetime.now()
-            memory_file = open(BACKUPFILE, 'a')
-            memory_file.write('\n' + str(t.year) + '-' + str(t.month) + '-' +
-                              str(t.day) + ',' + str(t.hour) + ':' +
-                              str(t.minute) + ':' + str(t.second) + '\n')
-            memory_file.write(fulllist[NUM]+'\n')
-            memory_file.write(st+'\n')
-            memory_file.close()
-
+        entry_content = self.look_ent.get()   # multi students' number split by ",".
+        print(entry_content)
+        # backup the entry.  ------------
+        backup_entry(entry_content)
         # Split each student number. Form the students' number list.
-        mm = st.split(',')
-        # get the studnum
-        studnum = []
-        for e in range(len(mm)):
-            if not mm[e].isdigit():    # each student number should be digit.
-                break                  # till it is not digit, break.
-
-            if len(mm[e]) == 3:          # student number.
-                # print(mm[e],type(mm[e]))
-                studnum.append(mm[e])
-                class_temp = mm[e][0]
-            elif len(mm[e]) == 2:        # student number.
-                mmm = class_temp + mm[e]
-                studnum.append(mmm)
-            else:
-                print('数字位数不对。')
-        pass
-        print(fulllist[NUM])
-        print(studnum)
-
+        student_num = process_entry(entry_content)
+        # get the mark of the student_num.
+        num_marks = get_num_mark(student_num)
+        # output the mark in the listbox.
         self.listbox.insert(0, fulllist[NUM])
-        # open the excel file.
-        wb = openpyxl.load_workbook(fulllist[NUM])
-        sheet = wb.get_active_sheet()
-        # Read the mark
-        result = []
-        # Read the title
-        row_title = []
-        for col in range(2, sheet.max_column+1):
-            row_title.append(sheet.cell(row=2, column=col).value)
-        result.append(row_title)
-
-        # Read the marks.
-        for e in range(len(studnum)):
-            for row in range(3, sheet.max_row + 1):
-                if str(sheet['A'+str(row)].value)[-3:] == studnum[e]:  # 学号在A列
-                    # Look up the mark.
-                    row_m = []
-                    for col in range(2, sheet.max_column+1):
-                        row_m.append(sheet.cell(row=row, column=col).value)
-                    result.append(row_m)
-                    break
-        # Output the mark.
-        print(result)
-        for each in result:
+        for each in num_marks:
             self.listbox.insert(0, each)
         pass
     
